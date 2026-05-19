@@ -5,6 +5,7 @@
 
 ## 基本方針
 
+- 特に指定がない限り、issue / PR / commit 本文 / docs は日本語で書く。
 - public repository として安全な既定値を優先する。
 - 秘密情報、個人情報、環境固有 state、生成物 cache はコミットしない。
 - GitHub Actions は最小権限を明示し、checkout では `persist-credentials: false` を使う。
@@ -25,6 +26,7 @@
 - 少なくとも種別 label を付ける。迷う場合は `needs-triage` を付ける。
 - 正確な label 名は `.github/labels.yml` を source of truth とする。docs-only 変更は `documentation` を既定候補にする。
 - `.github/labels.yml` を変更したら、`scripts/sync-labels --repo OWNER/REPO --dry-run` で差分を確認し、必要なら `--apply` で GitHub 側に反映する。
+- issue / PR template がある場合は、その見出しとレイアウトを維持して記述する。template を使わなかった場合は作成後に本文を更新して合わせる。
 
 ## 変更時の判断基準
 
@@ -42,7 +44,7 @@
 ## コミット方針
 
 - 件名は変更の主題が一読で分かるように簡潔に書く。
-- 本文は原則 `What:` と `Why:` を箇条書きで書く。
+- 本文は原則 `What:` と `Why:` を箇条書きで書き、内容は日本語にする。
 - `How:` は、実装手段や制約対応が判断材料になるときだけ追加する。
 - 小さな変更でも、件名だけでは意図が読めないなら本文を省略しない。
 
