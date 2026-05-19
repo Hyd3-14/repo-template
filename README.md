@@ -22,6 +22,7 @@ Hyd3 projects のための公開 repository baseline template です。
 3. 必要な secrets / GitHub App / environments を作成する。
 4. `rulesets/*.example.json` を確認し、bypass actor を追加してから ruleset を有効化する。
 5. 初回 PR で CI と dependency review の check 名を確認し、branch protection / ruleset の required checks に反映する。
+6. `scripts/sync-labels --repo OWNER/REPO --dry-run` で label 差分を確認し、必要なら `--apply` で反映する。
 
 ## Safe Defaults
 
@@ -52,13 +53,22 @@ Minimum recommended settings:
 ## Labels
 
 `.github/labels.yml` は declarative label source として使います。
-適用には `github/issue-labeler` など任意の label sync tool を使ってください。
-この template は特定の sync tool を固定しません。
+この template では、破壊的な label 削除をしない最小 sync helper として `scripts/sync-labels` を同梱しています。
+
+```sh
+scripts/sync-labels --repo OWNER/REPO --dry-run
+scripts/sync-labels --repo OWNER/REPO --apply
+```
+
+`--apply` を渡さない場合も dry-run として動きますが、通常手順では意図を明確にするため `--dry-run` を明示してください。
+issue / PR title には原則として `feat:` や `chore:` の prefix を付けず、種別や領域は labels で表します。
+PR title を squash merge commit に使う運用の場合だけ、PR title に Conventional Commits prefix を許容します。運用が未確認なら prefix なしを既定にします。
 
 ## Rulesets
 
 `rulesets/*.example.json` は `enforcement: disabled` を既定にしています。
 GitHub UI または管理用 script で内容を確認し、repo 固有の bypass actor と required check 名を調整してから `active` にしてください。
+`Baseline static checks` と `Dependency Review` は初期候補です。初回 PR 後に GitHub 上の実 check 名を確認してから active ruleset に反映してください。
 
 ## Validation
 

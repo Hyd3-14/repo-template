@@ -12,6 +12,20 @@
 - automerge は CI と dependency review の成功後だけ許可する。
 - repo 固有の判断は `docs/operations/repo-baseline.md` に追記する。
 
+## Consultation Gate
+
+- ユーザーが懸念、疑問、設計判断、方針相談を述べている場合は、ただちに実装しない。
+- まず質問への回答、現状整理、実装するなら何を変えるかの計画を提示し、ユーザー承認後に編集、commit、push へ進む。
+
+## GitHub Hygiene
+
+- issue / PR 作成時は、title prefix ではなく labels で種別、領域、状態、リスクを表す。
+- PR title は squash merge commit に使う場合だけ Conventional Commits prefix を許容する。
+- squash merge commit title への流用方針が未確認なら、PR title も prefix なしを既定にする。
+- 少なくとも種別 label を付ける。迷う場合は `needs-triage` を付ける。
+- 正確な label 名は `.github/labels.yml` を source of truth とする。docs-only 変更は `documentation` を既定候補にする。
+- `.github/labels.yml` を変更したら、`scripts/sync-labels --repo OWNER/REPO --dry-run` で差分を確認し、必要なら `--apply` で GitHub 側に反映する。
+
 ## 変更時の判断基準
 
 - template として再利用できる設定は残す。
