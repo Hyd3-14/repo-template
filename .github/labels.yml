@@ -1,0 +1,71 @@
+- name: bug
+  color: d73a4a
+  description: Something is not working.
+
+- name: enhancement
+  color: a2eeef
+  description: New feature or improvement.
+
+- name: chore
+  color: cfd3d7
+  description: Maintenance, tooling, or repository operations.
+
+- name: documentation
+  color: 0075ca
+  description: Documentation only changes.
+
+- name: security
+  color: ee0701
+  description: Security hardening, vulnerability handling, or secret rotation.
+
+- name: dependencies
+  color: 0366d6
+  description: Dependency updates.
+
+- name: github-actions
+  color: 2088ff
+  description: GitHub Actions dependency or workflow changes.
+
+- name: npm
+  color: cb3837
+  description: npm dependency updates.
+
+- name: docker
+  color: 2496ed
+  description: Docker dependency updates.
+
+- name: major-update
+  color: b60205
+  description: Semver major dependency update that needs explicit review.
+
+- name: minor-update
+  color: 0e8a16
+  description: Semver minor dependency update.
+
+- name: patch-update
+  color: 0e8a16
+  description: Semver patch dependency update.
+
+- name: automerge
+  color: 0e8a16
+  description: Eligible for guarded automerge.
+
+- name: blocked
+  color: b60205
+  description: Blocked by an external dependency or decision.
+
+- name: needs-triage
+  color: fbca04
+  description: Needs initial maintainer review.
+
+- name: needs-human-review
+  color: fbca04
+  description: Automation should not merge without a maintainer decision.
+
+- name: question
+  color: d876e3
+  description: Further information is requested.
+
+- name: wontfix
+  color: ffffff
+  description: This will not be worked on.

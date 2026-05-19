@@ -1,0 +1,61 @@
+name: Bug report
+description: Report a reproducible bug or regression.
+title: "bug: "
+labels:
+  - bug
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please keep secrets, tokens, logs with private data, and personal information out of public issues.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is broken?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide the smallest known reproduction.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, runtime, browser, package versions, commit SHA, or other relevant context.
+      placeholder: |
+        - OS:
+        - Runtime:
+        - Version or commit:
+    validations:
+      required: false
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional context
+      description: Links, screenshots, logs with secrets removed, or suspected cause.
+    validations:
+      required: false

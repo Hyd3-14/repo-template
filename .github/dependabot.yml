@@ -1,0 +1,61 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - github-actions
+    groups:
+      github-actions-minor-patch:
+        update-types:
+          - minor
+          - patch
+    commit-message:
+      prefix: chore
+      include: scope
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:15"
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - npm
+    groups:
+      npm-minor-patch:
+        update-types:
+          - minor
+          - patch
+    commit-message:
+      prefix: chore
+      include: scope
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:30"
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - docker
+    groups:
+      docker-minor-patch:
+        update-types:
+          - minor
+          - patch
+    commit-message:
+      prefix: chore
+      include: scope
