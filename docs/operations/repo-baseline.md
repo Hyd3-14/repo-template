@@ -42,6 +42,9 @@ Initial expected checks:
 - `Baseline static checks`
 - `Dependency Review`
 
+These names are provisional until the first PR reports the exact GitHub check names.
+Do not activate required check rules before confirming the names in GitHub.
+
 ## Dependabot Policy
 
 - Minor and patch updates may be grouped and eligible for guarded automerge.
@@ -65,6 +68,13 @@ Human-authored PRs and major updates require maintainer review.
 ## Ruleset Policy
 
 Ruleset examples are disabled by default.
+The default branch ruleset is tuned for personal, AI-assisted repositories:
+
+- Linear history is required.
+- Required approval count is `0`.
+- Required status checks remain strict.
+- Last-push approval is disabled.
+
 Before activation:
 
 - Confirm required check names.
