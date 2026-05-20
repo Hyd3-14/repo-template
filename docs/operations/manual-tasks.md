@@ -21,7 +21,6 @@ Recommended minimum:
 
 - [ ] `Baseline static checks`
 - [ ] `Dependency Review`
-- [ ] Treat these names as provisional until the first PR reports exact GitHub check names.
 
 ## Rulesets
 
@@ -54,11 +53,11 @@ Create only the secrets that are actually required by generated repo workflows.
 
 ## Labels
 
-`.github/labels.yml` is declarative source data.
+`.github/labels/labels.yml` is declarative source data.
 
 - [ ] Run `scripts/sync-labels --repo OWNER/REPO --dry-run`.
-- [ ] Apply labels with `scripts/sync-labels --repo OWNER/REPO --apply`.
-- [ ] Confirm issue / PR triage uses labels rather than title prefixes.
+- [ ] Review create/update/stale output.
+- [ ] Apply with `scripts/sync-labels --repo OWNER/REPO --apply` after confirming stale labels do not need deletion.
 
 ## Template Cleanup
 

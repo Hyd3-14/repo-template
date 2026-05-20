@@ -1,0 +1,30 @@
+name: Documentation
+description: README、docs、運用手順などのドキュメント変更を提案する。
+labels:
+  - "10: type/docs"
+  - "20: area/docs"
+body:
+  - type: textarea
+    id: target
+    attributes:
+      label: 対象
+      description: どの文書、節、導線を更新するかを書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 現状の問題
+      description: 古い、不足している、分かりにくい、誤解を招く点を書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: 完了条件
+      description: 完了と判断できる条件を書いてください。
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true

@@ -23,9 +23,9 @@
 - issue / PR 作成時は、title prefix ではなく labels で種別、領域、状態、リスクを表す。
 - PR title は squash merge commit に使う場合だけ Conventional Commits prefix を許容する。
 - squash merge commit title への流用方針が未確認なら、PR title も prefix なしを既定にする。
-- 少なくとも種別 label を付ける。迷う場合は `needs-triage` を付ける。
-- 正確な label 名は `.github/labels.yml` を source of truth とする。docs-only 変更は `documentation` を既定候補にする。
-- `.github/labels.yml` を変更したら、`scripts/sync-labels --repo OWNER/REPO --dry-run` で差分を確認し、必要なら `--apply` で GitHub 側に反映する。
+- 少なくとも `10: type/*` label を付ける。迷う場合は `00: needs-triage` を付ける。
+- 正確な label 名は `.github/labels/labels.yml` を source of truth とする。docs-only 変更は `10: type/docs` を既定候補にする。
+- `.github/labels/labels.yml` を変更したら、`scripts/sync-labels --repo OWNER/REPO --dry-run` で差分を確認し、必要なら `--apply` で GitHub 側に反映する。
 - issue / PR template がある場合は、その見出しとレイアウトを維持して記述する。template を使わなかった場合は作成後に本文を更新して合わせる。
 
 ## 変更時の判断基準

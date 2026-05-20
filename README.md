@@ -7,11 +7,12 @@ Hyd3 projects のための公開 repository baseline template です。
 
 - `AGENTS.md`: agent 向けの repo 運用ルール
 - `SECURITY.md`: 脆弱性報告と対応方針
-- `.github/ISSUE_TEMPLATE/`: bug / feature / chore の issue forms
-- `.github/pull_request_template.md`: PR checklist
+- `.github/ISSUE_TEMPLATE/`: bug / feature / docs / task / question / discussion の issue forms
+- `.github/PULL_REQUEST_TEMPLATE/` と `.github/pull_request_template.md`: PR templates
 - `.github/dependabot.yml`: minor / patch grouped update と major の明示レビュー
 - `.github/workflows/`: CI, dependency review, Dependabot triage, guarded automerge
-- `.github/labels.yml`: baseline label definitions
+- `.github/labels/`: baseline label definitions and sync notes
+- `scripts/sync-labels`: label sync helper
 - `rulesets/*.example.json`: GitHub Rulesets の安全側 example
 - `docs/operations/`: repo baseline と manual task の記録
 
@@ -22,7 +23,6 @@ Hyd3 projects のための公開 repository baseline template です。
 3. 必要な secrets / GitHub App / environments を作成する。
 4. `rulesets/*.example.json` を確認し、bypass actor を追加してから ruleset を有効化する。
 5. 初回 PR で CI と dependency review の check 名を確認し、branch protection / ruleset の required checks に反映する。
-6. `scripts/sync-labels --repo OWNER/REPO --dry-run` で label 差分を確認し、必要なら `--apply` で反映する。
 
 ## Safe Defaults
 
@@ -52,26 +52,20 @@ Minimum recommended settings:
 
 ## Labels
 
-`.github/labels.yml` は declarative label source として使います。
+`.github/labels/labels.yml` は declarative label source として使います。
 label name は `NN: group/name` 形式、description は日本語で統一します。
 数字 prefix は一覧順、色は意味の補助として使います。
 
-この template では、破壊的な label 削除をしない最小 sync helper として `scripts/sync-labels` を同梱しています。
-
 ```sh
-scripts/sync-labels --repo OWNER/REPO --dry-run
-scripts/sync-labels --repo OWNER/REPO --apply
+scripts/sync-labels --repo Hyd3-14/repo-template --dry-run
 ```
 
-`--apply` を渡さない場合も dry-run として動きますが、通常手順では意図を明確にするため `--dry-run` を明示してください。
-issue / PR title には原則として `feat:` や `chore:` の prefix を付けず、種別や領域は labels で表します。
-PR title を squash merge commit に使う運用の場合だけ、PR title に Conventional Commits prefix を許容します。運用が未確認なら prefix なしを既定にします。
+`scripts/sync-labels` は create/update のみを行い、既存 label の削除は行いません。
 
 ## Rulesets
 
 `rulesets/*.example.json` は `enforcement: disabled` を既定にしています。
 GitHub UI または管理用 script で内容を確認し、repo 固有の bypass actor と required check 名を調整してから `active` にしてください。
-`Baseline static checks` と `Dependency Review` は初期候補です。初回 PR 後に GitHub 上の実 check 名を確認してから active ruleset に反映してください。
 
 ## Validation
 

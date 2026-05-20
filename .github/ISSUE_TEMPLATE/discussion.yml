@@ -1,0 +1,37 @@
+name: Discussion
+description: 設計、方針、仕様判断など実装前の議論を起票する。
+labels:
+  - "10: type/discussion"
+  - "30: status/needs-decision"
+body:
+  - type: textarea
+    id: topic
+    attributes:
+      label: 議題
+      description: 決めたいこと、整理したいことを書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: 選択肢
+      description: 既に見えている案、迷っている案を書いてください。
+      placeholder: |
+        - A:
+        - B:
+    validations:
+      required: false
+  - type: textarea
+    id: constraints
+    attributes:
+      label: 制約
+      description: MVP scope、互換性、security、運用上の制約を書いてください。
+    validations:
+      required: false
+  - type: textarea
+    id: decision
+    attributes:
+      label: 決まったら行うこと
+      description: 結論後に issue 化、docs 化、実装する内容を書いてください。
+    validations:
+      required: true
