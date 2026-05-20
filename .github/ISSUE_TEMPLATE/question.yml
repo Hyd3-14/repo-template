@@ -1,0 +1,27 @@
+name: Question
+description: 使い方、仕様、意図について確認する。
+labels:
+  - "10: type/question"
+  - "30: status/needs-info"
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: 質問
+      description: 確認したいことを書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: 背景
+      description: なぜその確認が必要か、関連する issue / PR / docs があれば書いてください。
+    validations:
+      required: false
+  - type: textarea
+    id: expected-answer
+    attributes:
+      label: 期待する回答
+      description: 回答で判断したいこと、次に進めたい作業があれば書いてください。
+    validations:
+      required: false

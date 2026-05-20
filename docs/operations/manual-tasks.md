@@ -53,11 +53,11 @@ Create only the secrets that are actually required by generated repo workflows.
 
 ## Labels
 
-`.github/labels.yml` is declarative source data.
+`.github/labels/labels.yml` is declarative source data.
 
-- [ ] Choose a label sync tool.
-- [ ] Run label sync in dry-run mode first if supported.
-- [ ] Apply labels after reviewing destructive rename/delete behavior.
+- [ ] Run `scripts/sync-labels --repo OWNER/REPO --dry-run`.
+- [ ] Review create/update/stale output.
+- [ ] Apply with `scripts/sync-labels --repo OWNER/REPO --apply` after confirming stale labels do not need deletion.
 
 ## Template Cleanup
 

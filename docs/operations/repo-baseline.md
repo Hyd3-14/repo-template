@@ -17,12 +17,12 @@ Included:
 
 - Public repo safety guidelines in `AGENTS.md`
 - Security policy in `SECURITY.md`
-- Issue and pull request templates
+- Issue forms and pull request templates
 - Dependabot configuration for GitHub Actions, npm, and Docker ecosystems
 - Baseline CI with repository structure and obvious secret filename checks
 - Dependency review workflow
 - Dependabot triage and guarded automerge workflows
-- Declarative labels file
+- Declarative labels directory and sync helper
 - Disabled ruleset example
 - Manual task tracking
 
@@ -61,6 +61,16 @@ Human-authored PRs and major updates require maintainer review.
 - Number prefixes define list order; colors are assigned by meaning, not by prefix.
 - Issues and PRs should have at least one `10: type/*` label.
 - Use `00: needs-triage` when the correct type, area, priority, or next action is unclear.
+- Use `.github/labels/labels.yml` as the source of truth.
+- Run `scripts/sync-labels --repo OWNER/REPO --dry-run` before applying labels to GitHub.
+- The sync helper creates and updates labels, but does not delete stale labels.
+
+## Template Policy
+
+- Issue titles do not use type prefixes; issue type is expressed by labels.
+- Issue Forms set initial labels for the selected template.
+- Pull request templates cannot set labels; labels are applied by maintainers, reviewers, or automation.
+- Use `.github/PULL_REQUEST_TEMPLATE/README.md` when a non-default PR template is needed.
 
 ## Ruleset Policy
 

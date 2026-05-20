@@ -1,0 +1,40 @@
+name: Task
+description: 保守、設定、repo 運用などの作業を起票する。
+labels:
+  - "10: type/chore"
+  - "00: needs-triage"
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: 作業内容
+      description: 何をする必要があるかを書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: 理由
+      description: どのリスク、コスト、後続作業を減らすための作業かを書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 範囲
+      description: 含めること、含めないことを書いてください。
+      placeholder: |
+        Included:
+        Excluded:
+    validations:
+      required: false
+  - type: textarea
+    id: done
+    attributes:
+      label: 完了条件
+      description: 完了と判断できる条件を書いてください。
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true

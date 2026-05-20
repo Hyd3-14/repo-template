@@ -7,11 +7,12 @@ Hyd3 projects のための公開 repository baseline template です。
 
 - `AGENTS.md`: agent 向けの repo 運用ルール
 - `SECURITY.md`: 脆弱性報告と対応方針
-- `.github/ISSUE_TEMPLATE/`: bug / feature / chore の issue forms
-- `.github/pull_request_template.md`: PR checklist
+- `.github/ISSUE_TEMPLATE/`: bug / feature / docs / task / question / discussion の issue forms
+- `.github/PULL_REQUEST_TEMPLATE/` と `.github/pull_request_template.md`: PR templates
 - `.github/dependabot.yml`: minor / patch grouped update と major の明示レビュー
 - `.github/workflows/`: CI, dependency review, Dependabot triage, guarded automerge
-- `.github/labels.yml`: baseline label definitions
+- `.github/labels/`: baseline label definitions and sync notes
+- `scripts/sync-labels`: label sync helper
 - `rulesets/*.example.json`: GitHub Rulesets の安全側 example
 - `docs/operations/`: repo baseline と manual task の記録
 
@@ -51,11 +52,15 @@ Minimum recommended settings:
 
 ## Labels
 
-`.github/labels.yml` は declarative label source として使います。
+`.github/labels/labels.yml` は declarative label source として使います。
 label name は `NN: group/name` 形式、description は日本語で統一します。
 数字 prefix は一覧順、色は意味の補助として使います。
-適用には `github/issue-labeler` など任意の label sync tool を使ってください。
-この template は特定の sync tool を固定しません。
+
+```sh
+scripts/sync-labels --repo Hyd3-14/repo-template --dry-run
+```
+
+`scripts/sync-labels` は create/update のみを行い、既存 label の削除は行いません。
 
 ## Rulesets
 
