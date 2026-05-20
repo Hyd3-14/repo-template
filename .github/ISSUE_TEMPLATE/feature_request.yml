@@ -2,8 +2,8 @@ name: Feature request
 description: Propose a user-visible capability or repo behavior.
 title: "feat: "
 labels:
-  - enhancement
-  - needs-triage
+  - "10: type/feature"
+  - "00: needs-triage"
 body:
   - type: textarea
     id: problem

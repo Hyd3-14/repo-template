@@ -9,8 +9,8 @@ updates:
       timezone: Asia/Tokyo
     open-pull-requests-limit: 5
     labels:
-      - dependencies
-      - github-actions
+      - "20: area/dependencies"
+      - "20: area/ci"
     groups:
       github-actions-minor-patch:
         update-types:
@@ -29,8 +29,7 @@ updates:
       timezone: Asia/Tokyo
     open-pull-requests-limit: 5
     labels:
-      - dependencies
-      - npm
+      - "20: area/dependencies"
     groups:
       npm-minor-patch:
         update-types:
@@ -49,8 +48,7 @@ updates:
       timezone: Asia/Tokyo
     open-pull-requests-limit: 5
     labels:
-      - dependencies
-      - docker
+      - "20: area/dependencies"
     groups:
       docker-minor-patch:
         update-types:
