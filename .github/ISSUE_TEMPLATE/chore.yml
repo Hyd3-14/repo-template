@@ -2,8 +2,8 @@ name: Chore
 description: Track maintenance, documentation, or repository operations work.
 title: "chore: "
 labels:
-  - chore
-  - needs-triage
+  - "10: type/chore"
+  - "00: needs-triage"
 body:
   - type: textarea
     id: task

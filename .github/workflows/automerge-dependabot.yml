@@ -103,8 +103,8 @@ jobs:
         run: |
           set -euo pipefail
           labels=$(gh api "/repos/$REPO/issues/$PR_NUMBER/labels" --jq 'map(.name)')
-          has_automerge=$(jq -r 'contains(["automerge"])' <<< "$labels")
-          has_major=$(jq -r 'contains(["major-update"])' <<< "$labels")
+          has_automerge=$(jq -r 'contains(["70: automation/automerge"])' <<< "$labels")
+          has_major=$(jq -r 'contains(["60: deps/major"])' <<< "$labels")
           if [ "$has_automerge" != "true" ] || [ "$has_major" = "true" ]; then
             echo "ready=false" >> "$GITHUB_OUTPUT"
             exit 0

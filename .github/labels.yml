@@ -1,71 +1,131 @@
-- name: bug
-  color: d73a4a
-  description: Something is not working.
+- name: "00: needs-triage"
+  color: "fbca04"
+  description: "初回確認待ち。種別、領域、優先度、次の対応をまだ判断していない。"
 
-- name: enhancement
-  color: a2eeef
-  description: New feature or improvement.
+- name: "10: type/bug"
+  color: "d73a4a"
+  description: "期待と異なる動作、不具合、回帰の修正。"
 
-- name: chore
-  color: cfd3d7
-  description: Maintenance, tooling, or repository operations.
+- name: "10: type/feature"
+  color: "0969da"
+  description: "新機能、既存機能の拡張、利用価値を増やす変更。"
 
-- name: documentation
-  color: 0075ca
-  description: Documentation only changes.
+- name: "10: type/docs"
+  color: "0075ca"
+  description: "README、docs、コメント、運用手順などドキュメント中心の変更。"
 
-- name: security
-  color: ee0701
-  description: Security hardening, vulnerability handling, or secret rotation.
+- name: "10: type/chore"
+  color: "cfd3d7"
+  description: "保守、設定、ツール、repo 運用など、機能挙動を主目的としない変更。"
 
-- name: dependencies
-  color: 0366d6
-  description: Dependency updates.
+- name: "10: type/refactor"
+  color: "5319e7"
+  description: "外部挙動を変えずに、構造、命名、責務、保守性を改善する変更。"
 
-- name: github-actions
-  color: 2088ff
-  description: GitHub Actions dependency or workflow changes.
+- name: "10: type/test"
+  color: "5319e7"
+  description: "テスト追加、テスト修正、検証観点の整備。"
 
-- name: npm
-  color: cb3837
-  description: npm dependency updates.
+- name: "10: type/security"
+  color: "ee0701"
+  description: "脆弱性対応、権限、secret、supply chain、security policy に関する変更。"
 
-- name: docker
-  color: 2496ed
-  description: Docker dependency updates.
+- name: "10: type/question"
+  color: "d876e3"
+  description: "使い方、仕様、意図について確認したい事項。実装タスクとは限らない。"
 
-- name: major-update
-  color: b60205
-  description: Semver major dependency update that needs explicit review.
+- name: "10: type/discussion"
+  color: "d876e3"
+  description: "設計、方針、仕様判断など、実装前に合意や整理が必要な議論。"
 
-- name: minor-update
-  color: 0e8a16
-  description: Semver minor dependency update.
+- name: "20: area/ci"
+  color: "2088ff"
+  description: "GitHub Actions、CI、workflow、検証ジョブに関する変更。"
 
-- name: patch-update
-  color: 0e8a16
-  description: Semver patch dependency update.
+- name: "20: area/github"
+  color: "2088ff"
+  description: "Issue/PR templates、labels、rulesets、Dependabot など GitHub 運用設定。"
 
-- name: automerge
-  color: 0e8a16
-  description: Eligible for guarded automerge.
+- name: "20: area/docs"
+  color: "0075ca"
+  description: "docs 配下、README、運用文書などドキュメント領域。"
 
-- name: blocked
-  color: b60205
-  description: Blocked by an external dependency or decision.
+- name: "20: area/template"
+  color: "6f42c1"
+  description: "生成先 repo に引き継ぐ template baseline の変更。"
 
-- name: needs-triage
-  color: fbca04
-  description: Needs initial maintainer review.
+- name: "20: area/dependencies"
+  color: "0366d6"
+  description: "依存関係、lockfile、package manager、Dependabot に関する変更。"
 
-- name: needs-human-review
-  color: fbca04
-  description: Automation should not merge without a maintainer decision.
+- name: "20: area/security"
+  color: "ee0701"
+  description: "security policy、secret、権限、supply chain hardening に関する領域。"
 
-- name: question
-  color: d876e3
-  description: Further information is requested.
+- name: "30: status/needs-info"
+  color: "fbca04"
+  description: "追加情報待ち。回答や再現情報がないと次の判断に進めない。"
 
-- name: wontfix
-  color: ffffff
-  description: This will not be worked on.
+- name: "30: status/needs-decision"
+  color: "fbca04"
+  description: "実装方針、採用可否、優先度などの人間の判断待ち。"
+
+- name: "30: status/needs-human-review"
+  color: "fbca04"
+  description: "Agent や automation だけで完了させず、人間の確認を必要とする。"
+
+- name: "30: status/blocked"
+  color: "b60205"
+  description: "外部作業、別 issue、権限、未決定事項により進行できない。"
+
+- name: "30: status/ready"
+  color: "0e8a16"
+  description: "方針と着手条件が揃っており、実装または対応を開始できる。"
+
+- name: "40: priority/high"
+  color: "b60205"
+  description: "次に優先して対応する。放置すると運用、品質、進行に明確な悪影響がある。"
+
+- name: "40: priority/low"
+  color: "c2e0c6"
+  description: "急がない。余裕があるとき、または関連作業のついでに対応する。"
+
+- name: "50: risk/breaking"
+  color: "b60205"
+  description: "互換性、既存運用、公開 API、生成先 repo に破壊的影響があり得る。"
+
+- name: "50: risk/security"
+  color: "ee0701"
+  description: "秘密情報、権限、脆弱性、supply chain に関するリスクがある。"
+
+- name: "60: deps/major"
+  color: "b60205"
+  description: "semver major 更新。CI が通っても人間が変更内容を確認する。"
+
+- name: "60: deps/minor"
+  color: "0e8a16"
+  description: "semver minor 更新。通常は grouped update として扱う。"
+
+- name: "60: deps/patch"
+  color: "0e8a16"
+  description: "semver patch 更新。通常は低リスクな依存更新として扱う。"
+
+- name: "70: automation/automerge"
+  color: "0e8a16"
+  description: "CI、dependency review、設定済み条件を満たした場合に自動 merge 可能。"
+
+- name: "70: automation/manual-task"
+  color: "6f42c1"
+  description: "GitHub UI、secret、外部サービス、ローカル環境など手動対応が残る。"
+
+- name: "90: resolution/duplicate"
+  color: "cfd3d7"
+  description: "同じ内容の issue、PR、discussion が既に存在する。"
+
+- name: "90: resolution/invalid"
+  color: "cfd3d7"
+  description: "この repo の対象外、前提不成立、または対応単位として扱えない。"
+
+- name: "90: resolution/wontfix"
+  color: "ffffff"
+  description: "内容は確認したが、方針、scope、優先度の理由で対応しない。"

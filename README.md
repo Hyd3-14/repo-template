@@ -26,7 +26,7 @@ Hyd3 projects のための公開 repository baseline template です。
 ## Safe Defaults
 
 Dependabot は minor / patch を ecosystem ごとに group 化します。
-major update は自動 close せず、`dependencies`, `major-update`, `needs-human-review` を付けて人が判断します。
+major update は自動 close せず、`20: area/dependencies`, `60: deps/major`, `30: status/needs-human-review` を付けて人が判断します。
 
 Automerge workflow は Dependabot PR のみを対象にし、以下を満たす場合だけ merge を試みます。
 
@@ -52,6 +52,8 @@ Minimum recommended settings:
 ## Labels
 
 `.github/labels.yml` は declarative label source として使います。
+label name は `NN: group/name` 形式、description は日本語で統一します。
+数字 prefix は一覧順、色は意味の補助として使います。
 適用には `github/issue-labeler` など任意の label sync tool を使ってください。
 この template は特定の sync tool を固定しません。
 

@@ -45,7 +45,7 @@ Initial expected checks:
 ## Dependabot Policy
 
 - Minor and patch updates may be grouped and eligible for guarded automerge.
-- Major updates are labeled `major-update` and `needs-human-review`.
+- Major updates are labeled `60: deps/major` and `30: status/needs-human-review`.
 - Major updates must not be auto-closed by default.
 - Ecosystems that do not apply to a generated repo should be removed from `.github/dependabot.yml`.
 
@@ -53,6 +53,14 @@ Initial expected checks:
 
 Automerge is allowed only for Dependabot minor / patch PRs after required checks succeed.
 Human-authored PRs and major updates require maintainer review.
+
+## Label Policy
+
+- Label names use `NN: group/name`.
+- Descriptions are written in Japanese so maintainers and agents can choose labels consistently.
+- Number prefixes define list order; colors are assigned by meaning, not by prefix.
+- Issues and PRs should have at least one `10: type/*` label.
+- Use `00: needs-triage` when the correct type, area, priority, or next action is unclear.
 
 ## Ruleset Policy
 

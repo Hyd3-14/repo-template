@@ -2,8 +2,8 @@ name: Bug report
 description: Report a reproducible bug or regression.
 title: "bug: "
 labels:
-  - bug
-  - needs-triage
+  - "10: type/bug"
+  - "00: needs-triage"
 body:
   - type: markdown
     attributes:
