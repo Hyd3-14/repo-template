@@ -22,7 +22,9 @@ permissions:
 jobs:
   automerge:
     name: Guarded automerge
-    if: github.event_name == 'pull_request_target'
+    if: >
+      github.event_name == 'pull_request_target' &&
+      github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Check Dependabot PR metadata
