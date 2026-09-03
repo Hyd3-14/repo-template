@@ -9,8 +9,9 @@ updates:
       timezone: Asia/Tokyo
     open-pull-requests-limit: 5
     labels:
-      - "20: area/dependencies"
-      - "20: area/ci"
+      - "type: chore"
+      - "area: ci"
+      - "risk: supply-chain"
     groups:
       github-actions-minor-patch:
         update-types:
@@ -29,7 +30,8 @@ updates:
       timezone: Asia/Tokyo
     open-pull-requests-limit: 5
     labels:
-      - "20: area/dependencies"
+      - "type: chore"
+      - "risk: supply-chain"
     groups:
       npm-minor-patch:
         update-types:
@@ -48,7 +50,8 @@ updates:
       timezone: Asia/Tokyo
     open-pull-requests-limit: 5
     labels:
-      - "20: area/dependencies"
+      - "type: chore"
+      - "risk: supply-chain"
     groups:
       docker-minor-patch:
         update-types:

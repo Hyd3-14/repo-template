@@ -22,7 +22,9 @@ permissions:
 jobs:
   automerge:
     name: Guarded automerge
-    if: github.event_name == 'pull_request_target'
+    if: >
+      github.event_name == 'pull_request_target' &&
+      github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Check Dependabot PR metadata
@@ -88,13 +90,25 @@ jobs:
             echo "has_pr=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          echo "has_pr=true" >> "$GITHUB_OUTPUT"
-          echo "url=$(echo "$prs" | jq -r '.html_url')" >> "$GITHUB_OUTPUT"
-          echo "number=$(echo "$prs" | jq -r '.number')" >> "$GITHUB_OUTPUT"
+          {
+            echo "has_pr=true"
+            echo "url=$(jq -r '.html_url' <<< "$prs")"
+            echo "number=$(jq -r '.number' <<< "$prs")"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Fetch Dependabot metadata
+        id: metadata
+        if: steps.pr.outputs.has_pr == 'true' && github.event.workflow_run.conclusion == 'success'
+        uses: dependabot/fetch-metadata@08eff52bf64351f401fb50d4972fa95b9f2c2d1b # v2.4.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Confirm PR is eligible
         id: eligible
-        if: steps.pr.outputs.has_pr == 'true' && github.event.workflow_run.conclusion == 'success'
+        if: >
+          steps.pr.outputs.has_pr == 'true' &&
+          github.event.workflow_run.conclusion == 'success' &&
+          contains(fromJSON('["version-update:semver-minor", "version-update:semver-patch"]'), steps.metadata.outputs.update-type)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
@@ -103,9 +117,8 @@ jobs:
         run: |
           set -euo pipefail
           labels=$(gh api "/repos/$REPO/issues/$PR_NUMBER/labels" --jq 'map(.name)')
-          has_automerge=$(jq -r 'contains(["70: automation/automerge"])' <<< "$labels")
-          has_major=$(jq -r 'contains(["60: deps/major"])' <<< "$labels")
-          if [ "$has_automerge" != "true" ] || [ "$has_major" = "true" ]; then
+          has_blocked=$(jq -r 'contains(["status: blocked"])' <<< "$labels")
+          if [ "$has_blocked" = "true" ]; then
             echo "ready=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi

@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+python3 - <<'PY'
+from __future__ import annotations
+
+import re
+from pathlib import Path
+
+expected_labels = {
+    "type: feature",
+    "type: bug",
+    "type: chore",
+    "type: docs",
+    "area: ci",
+    "area: github",
+    "area: config",
+    "area: security",
+    "area: ai-agent",
+    "status: blocked",
+    "risk: security",
+    "risk: supply-chain",
+    "size: s",
+}
+expected_forms = {"bug.yml", "feature.yml", "chore.yml"}
+expected_heading_sets = {
+    "ja": [
+        "## 関連Issue",
+        "## 概要",
+        "## 変更点",
+        "## 動作確認",
+        "## 補足",
+    ],
+    "en": [
+        "## Related issue",
+        "## Summary",
+        "## Changes",
+        "## Verification",
+        "## Notes",
+    ],
+}
+
+def fail(message: str) -> None:
+    raise SystemExit(f"[error] {message}")
+
+required = [
+    Path("README.md"),
+    Path("AGENTS.md"),
+    Path("SECURITY.md"),
+    Path(".editorconfig"),
+    Path(".gitattributes"),
+    Path(".gitignore"),
+    Path(".github/dependabot.yml"),
+    Path(".github/hyd3-baseline.yml"),
+    Path(".github/labels.yml"),
+    Path(".github/workflows/ci.yml"),
+    Path(".github/workflows/dependency-review.yml"),
+    Path(".github/PULL_REQUEST_TEMPLATE/default.md"),
+    Path(".github/pull_request_template.md"),
+]
+for path in required:
+    if not path.is_file():
+        fail(f"必須ファイルがありません: {path}")
+
+forms_dir = Path(".github/ISSUE_TEMPLATE")
+actual_forms = {path.name for path in forms_dir.iterdir() if path.is_file() and path.name != "config.yml"}
+if actual_forms != expected_forms:
+    fail(f"Issue Formの構成が標準と異なります: {sorted(actual_forms)}")
+
+legacy_names = {"bug_report.yml", "feature_request.yml"}
+if any((forms_dir / name).exists() for name in legacy_names):
+    fail("旧Issue Formのファイル名がactive配置に残っています")
+
+for path in sorted(forms_dir.glob("*.yml")):
+    if path.name == "config.yml":
+        continue
+    text = path.read_text(encoding="utf-8")
+    titles = re.findall(r"^title:\s*(.*?)\s*$", text, flags=re.MULTILINE)
+    if titles != ['""']:
+        fail(f"Issue Formのtitleは空文字列である必要があります: {path}")
+    if re.search(r"\[(?:Bug|Feature|Chore)\]:|^title:\s*[\"'](?:bug|feat|chore):", text, flags=re.MULTILINE):
+        fail(f"Issue Formに種別prefixが残っています: {path}")
+
+pr_template = Path(".github/PULL_REQUEST_TEMPLATE/default.md")
+headings = [line for line in pr_template.read_text(encoding="utf-8").splitlines() if line.startswith("## ")]
+if headings not in expected_heading_sets.values():
+    fail(f"PR templateの見出し構成が標準と異なります: {headings}")
+auto_loaded_template = Path(".github/pull_request_template.md")
+if auto_loaded_template.read_text(encoding="utf-8") != pr_template.read_text(encoding="utf-8"):
+    fail("自動読み込みPR templateがcanonical templateと一致しません")
+for stale in [Path(".github/pull_request_template.md"), Path(".github/PULL_REQUEST_TEMPLATE.md")]:
+    if stale == auto_loaded_template:
+        continue
+    if stale.exists():
+        fail(f"旧PR templateのactive配置が残っています: {stale}")
+
+labels = []
+label_pattern = re.compile(r"^\s*-\s+name:\s*([\"'])(.*?)\1\s*$")
+for line in Path(".github/labels.yml").read_text(encoding="utf-8").splitlines():
+    match = label_pattern.match(line)
+    if match:
+        labels.append(match.group(2))
+if set(labels) != expected_labels or len(labels) != len(expected_labels):
+    fail(f"label構成が標準と異なります: {labels}")
+
+marker = Path(".github/hyd3-baseline.yml").read_text(encoding="utf-8")
+if not re.search(r'^branch_naming:\s*["\']?<type>/<issue-number>-<short-summary>["\']?\s*$', marker, flags=re.MULTILINE):
+    fail("branch_namingが標準と一致しません")
+
+print("[OK] repository template contract")
+PY

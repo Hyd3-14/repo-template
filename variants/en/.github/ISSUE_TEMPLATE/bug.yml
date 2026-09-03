@@ -1,14 +1,13 @@
 name: Bug report
-description: Report a reproducible bug or regression.
-title: "bug: "
+description: Report a reproducible bug or regression
+title: ""
 labels:
-  - "10: type/bug"
-  - "00: needs-triage"
+  - "type: bug"
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting a bug. Please keep secrets, tokens, logs with private data, and personal information out of public issues.
+        Do not include secrets, tokens, or personal information in a public issue.
   - type: textarea
     id: summary
     attributes:
@@ -45,17 +44,6 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: OS, runtime, browser, package versions, commit SHA, or other relevant context.
-      placeholder: |
-        - OS:
-        - Runtime:
-        - Version or commit:
-    validations:
-      required: false
-  - type: textarea
-    id: notes
-    attributes:
-      label: Additional context
-      description: Links, screenshots, logs with secrets removed, or suspected cause.
+      description: OS, runtime, version, or commit SHA.
     validations:
       required: false

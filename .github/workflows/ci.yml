@@ -18,6 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@85e6279cec87321a52edac9c87bce653a07cf6c2 # v4.2.2
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Check repository baseline files
@@ -28,13 +29,23 @@ jobs:
             "AGENTS.md"
             "README.md"
             "SECURITY.md"
+            ".editorconfig"
+            ".gitattributes"
+            ".gitignore"
             ".github/dependabot.yml"
+            ".github/hyd3-baseline.yml"
             ".github/labels.yml"
-            ".github/pull_request_template.md"
+            ".github/ISSUE_TEMPLATE/bug.yml"
+            ".github/ISSUE_TEMPLATE/chore.yml"
+            ".github/ISSUE_TEMPLATE/feature.yml"
+            ".github/PULL_REQUEST_TEMPLATE/default.md"
             ".github/workflows/ci.yml"
             ".github/workflows/dependency-review.yml"
+            ".github/workflows/github-actions-static-checks.yml"
             "docs/operations/manual-tasks.md"
             "docs/operations/repo-baseline.md"
+            "scripts/sync-labels"
+            "scripts/validate-template"
           )
 
           missing=0
@@ -44,14 +55,32 @@ jobs:
               missing=1
             fi
           done
-          exit "$missing"
+          if [ "$missing" -ne 0 ]; then
+            exit "$missing"
+          fi
+
+          ./scripts/validate-template
+
+      - name: Check committed whitespace
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: git diff --check "$BASE_SHA" "$HEAD_SHA"
+
+      - name: Check working tree whitespace
+        if: github.event_name != 'pull_request'
+        run: git diff --check
 
       - name: Check for obvious secret filenames
         shell: bash
         run: |
           set -euo pipefail
           forbidden='(^|/)(auth|oauth|token|credential|credentials|secret|secrets|session|sessions|hosts)\.(json|ya?ml|toml|ini|env|txt)$|(^|/)\.env($|\.)'
-          matches=$(find . -path ./.git -prune -o -type f -print | sed 's#^\./##' | grep -Ei "$forbidden" || true)
+          matches=$(find . -path ./.git -prune -o -type f -print |
+            sed 's#^\./##' |
+            grep -Ei "$forbidden" |
+            grep -Eiv '(^|/)\.env\.example$' || true)
           if [ -n "$matches" ]; then
             echo "$matches"
             echo "::error::Potential secret or local state file names found"
