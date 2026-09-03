@@ -9,6 +9,7 @@ Copy these files to a generated repository when English is the preferred human-f
 - `SECURITY.md`
 - `.github/ISSUE_TEMPLATE/*.yml`
 - `.github/PULL_REQUEST_TEMPLATE/default.md`
+- `.github/pull_request_template.md`
 
 Keep the root machine-readable configuration unchanged. Workflows, Dependabot, labels validation, and branch policy are shared rather than duplicated by locale.
 

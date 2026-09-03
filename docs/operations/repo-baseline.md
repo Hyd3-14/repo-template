@@ -29,7 +29,8 @@
 - `.github/ISSUE_TEMPLATE/bug.yml`
 - `.github/ISSUE_TEMPLATE/feature.yml`
 - `.github/ISSUE_TEMPLATE/chore.yml`
-- `.github/PULL_REQUEST_TEMPLATE/default.md`
+- `.github/PULL_REQUEST_TEMPLATE/default.md`（canonical）
+- `.github/pull_request_template.md`（GitHub自動読み込み用。canonicalと同一内容）
 - `.github/workflows/ci.yml`
 - `.github/workflows/dependency-review.yml`
 

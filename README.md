@@ -28,7 +28,7 @@ rootの人間向けファイルは日本語をdefaultとします。英語で使
 - Issue titleには種別prefixを付けず、種別はlabelsで表す。
 - PR titleは原則Conventional Commits形式とし、squash merge時の履歴へそのまま利用できるようにする。
 - Issue Formは`.github/ISSUE_TEMPLATE/bug.yml`、`feature.yml`、`chore.yml`を使う。
-- PR templateは`.github/PULL_REQUEST_TEMPLATE/default.md`を使う。
+- PR templateのcanonicalは`.github/PULL_REQUEST_TEMPLATE/default.md`とする。GitHubの通常のPR作成画面でも読み込めるよう、同内容の`.github/pull_request_template.md`をcompatibility aliasとして置く。
 - branchは`<type>/<issue-number>-<short-summary>`を標準とする。
 
 ## Labels

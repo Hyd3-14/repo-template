@@ -26,13 +26,22 @@ expected_labels = {
     "size: s",
 }
 expected_forms = {"bug.yml", "feature.yml", "chore.yml"}
-expected_headings = [
-    "## 関連Issue",
-    "## 概要",
-    "## 変更点",
-    "## 動作確認",
-    "## 補足",
-]
+expected_heading_sets = {
+    "ja": [
+        "## 関連Issue",
+        "## 概要",
+        "## 変更点",
+        "## 動作確認",
+        "## 補足",
+    ],
+    "en": [
+        "## Related issue",
+        "## Summary",
+        "## Changes",
+        "## Verification",
+        "## Notes",
+    ],
+}
 
 def fail(message: str) -> None:
     raise SystemExit(f"[error] {message}")
@@ -47,7 +56,10 @@ required = [
     Path(".github/dependabot.yml"),
     Path(".github/hyd3-baseline.yml"),
     Path(".github/labels.yml"),
+    Path(".github/workflows/ci.yml"),
+    Path(".github/workflows/dependency-review.yml"),
     Path(".github/PULL_REQUEST_TEMPLATE/default.md"),
+    Path(".github/pull_request_template.md"),
 ]
 for path in required:
     if not path.is_file():
@@ -74,9 +86,14 @@ for path in sorted(forms_dir.glob("*.yml")):
 
 pr_template = Path(".github/PULL_REQUEST_TEMPLATE/default.md")
 headings = [line for line in pr_template.read_text(encoding="utf-8").splitlines() if line.startswith("## ")]
-if headings != expected_headings:
+if headings not in expected_heading_sets.values():
     fail(f"PR templateの見出し構成が標準と異なります: {headings}")
+auto_loaded_template = Path(".github/pull_request_template.md")
+if auto_loaded_template.read_text(encoding="utf-8") != pr_template.read_text(encoding="utf-8"):
+    fail("自動読み込みPR templateがcanonical templateと一致しません")
 for stale in [Path(".github/pull_request_template.md"), Path(".github/PULL_REQUEST_TEMPLATE.md")]:
+    if stale == auto_loaded_template:
+        continue
     if stale.exists():
         fail(f"旧PR templateのactive配置が残っています: {stale}")
 

@@ -94,9 +94,19 @@ jobs:
             echo "number=$(jq -r '.number' <<< "$prs")"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Fetch Dependabot metadata
+        id: metadata
+        if: steps.pr.outputs.has_pr == 'true' && github.event.workflow_run.conclusion == 'success'
+        uses: dependabot/fetch-metadata@08eff52bf64351f401fb50d4972fa95b9f2c2d1b # v2.4.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Confirm PR is eligible
         id: eligible
-        if: steps.pr.outputs.has_pr == 'true' && github.event.workflow_run.conclusion == 'success'
+        if: >
+          steps.pr.outputs.has_pr == 'true' &&
+          github.event.workflow_run.conclusion == 'success' &&
+          contains(fromJSON('["version-update:semver-minor", "version-update:semver-patch"]'), steps.metadata.outputs.update-type)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}

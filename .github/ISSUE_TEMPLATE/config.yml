@@ -1,8 +1,1 @@
 blank_issues_enabled: false
-contact_links:
-  - name: 脆弱性の報告
-    url: https://github.com/Hyd3-14/repo-template/security/advisories/new
-    about: 脆弱性は公開Issueではなく非公開で報告してください。
-  - name: リポジトリ運用の手動作業
-    url: https://github.com/Hyd3-14/repo-template/blob/main/docs/operations/manual-tasks.md
-    about: ファイルだけでは完了しない初期設定を確認してください。
