@@ -1,0 +1,56 @@
+name: バグ報告
+description: 再現可能な不具合や回帰を報告する
+title: ""
+labels:
+  - "type: bug"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        秘密情報、token、個人情報を公開Issueに含めないでください。
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: 何が壊れているかを短く書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+      description: 最小の再現手順を書いてください。
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する挙動
+      description: 本来どうなるべきかを書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の挙動
+      description: 実際に何が起きたかを書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 環境
+      description: OS、runtime、version、commit SHAなどを書いてください。
+    validations:
+      required: false
+  - type: textarea
+    id: notes
+    attributes:
+      label: 補足
+      description: secretを除去したログ、リンク、スクリーンショットなど。
+    validations:
+      required: false

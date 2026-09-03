@@ -1,0 +1,9 @@
+version: 2
+profile: base
+template_role: common-base
+branch_naming: "<type>/<issue-number>-<short-summary>"
+issue_title_prefix: none
+default_language: ja
+english_variant: variants/en
+labels_source: .github/labels.yml
+pr_template: .github/PULL_REQUEST_TEMPLATE/default.md

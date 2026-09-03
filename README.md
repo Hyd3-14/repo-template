@@ -1,85 +1,51 @@
 # Hyd3 Repository Template
 
-Hyd3 projects のための公開 repository baseline template です。
-新規 repo の最初の一手として、security / CI / issue workflow / Dependabot / ruleset の安全な既定値をまとめています。
+Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から新規repoを作成できる公開形を維持します。
 
-## Included
+## 含まれるもの
 
-- `AGENTS.md`: agent 向けの repo 運用ルール
-- `SECURITY.md`: 脆弱性報告と対応方針
-- `.github/ISSUE_TEMPLATE/`: bug / feature / chore の issue forms
-- `.github/pull_request_template.md`: PR checklist
-- `.github/dependabot.yml`: minor / patch grouped update と major の明示レビュー
-- `.github/workflows/`: CI, dependency review, Dependabot triage, guarded automerge
-- `.github/labels.yml`: baseline label definitions
-- `rulesets/*.example.json`: GitHub Rulesets の安全側 example
-- `docs/operations/`: repo baseline と manual task の記録
+- 軽量な`AGENTS.md`
+- `.editorconfig`、`.gitattributes`、`.gitignore`
+- 日本語defaultのIssue FormsとPR template
+- `.github/labels.yml`のlabels baseline
+- Dependabot、dependency review、GitHub Actions static check、baseline CI
+- ruleset exampleと初期設定docs
 
-## Use This Template
+## 言語variant
 
-1. GitHub の "Use this template" から新規 repo を作成する。
-2. README と `docs/operations/repo-baseline.md` を新規 repo 向けに更新する。
-3. 必要な secrets / GitHub App / environments を作成する。
-4. `rulesets/*.example.json` を確認し、bypass actor を追加してから ruleset を有効化する。
-5. 初回 PR で CI と dependency review の check 名を確認し、branch protection / ruleset の required checks に反映する。
-6. `scripts/sync-labels --repo OWNER/REPO --dry-run` で label 差分を確認し、必要なら `--apply` で反映する。
+rootの人間向けファイルは日本語をdefaultとします。英語で使う場合は`variants/en/`のREADME、AGENTS、Issue Forms、PR template、SECURITYを生成先repoへコピーしてください。workflow、Dependabot、labelsのvalidationなどmachine-readableな共通設定はrootだけで管理します。
 
-## Safe Defaults
+## Use this template
 
-Dependabot は minor / patch を ecosystem ごとに group 化します。
-major update は自動 close せず、`20: area/dependencies`, `60: deps/major`, `30: status/needs-human-review` を付けて人が判断します。
+1. GitHubの`Use this template`から新規repoを作成する。
+2. READMEと`docs/operations/repo-baseline.md`を生成先repo向けに更新する。
+3. repo固有のbuild、test、release手順を追加する。
+4. `./scripts/validate-template`と`git diff --check`を実行する。
+5. `docs/operations/manual-tasks.md`を確認し、GitHub側の設定を行う。
 
-Automerge workflow は Dependabot PR のみを対象にし、以下を満たす場合だけ merge を試みます。
+## GitHub運用
 
-- PR author が `dependabot[bot]`
-- update type が semver minor または patch
-- `ci.yml` と `dependency-review.yml` が成功している
-- major update ではない
-
-## GitHub Setup Required
-
-この template だけでは GitHub 側の設定は完了しません。
-初期導入時に `docs/operations/manual-tasks.md` を確認してください。
-
-Minimum recommended settings:
-
-- Rulesets or branch protection for the default branch
-- Required checks: `Baseline static checks` and `Dependency Review`
-- GitHub Actions read-only default token permissions
-- Dependabot alerts and security updates
-- Secrets / variables required by repo-specific workflows
-- Bypass actors for emergency maintainers or release automation
+- Issue titleには種別prefixを付けず、種別はlabelsで表す。
+- PR titleは原則Conventional Commits形式とし、squash merge時の履歴へそのまま利用できるようにする。
+- Issue Formは`.github/ISSUE_TEMPLATE/bug.yml`、`feature.yml`、`chore.yml`を使う。
+- PR templateは`.github/PULL_REQUEST_TEMPLATE/default.md`を使う。
+- branchは`<type>/<issue-number>-<short-summary>`を標準とする。
 
 ## Labels
 
-`.github/labels.yml` は declarative label source として使います。
-label name は `NN: group/name` 形式、description は日本語で統一します。
-数字 prefix は一覧順、色は意味の補助として使います。
+`.github/labels.yml`がこのtemplateのlabels baselineです。名前は英語のmachine-readable identifier、descriptionは日本語とします。種別、領域、状態、リスク、規模を必要最小限のlabelで表します。
 
-この template では、破壊的な label 削除をしない最小 sync helper として `scripts/sync-labels` を同梱しています。
+GitHub上の既存labelを変更する場合は、まずdry-runで差分と削除候補を確認し、既存Issue/PRへの影響を人間が確認してください。通常のsyncはcreate/updateに限定し、削除は明示的な移行判断がある場合だけ行います。
 
 ```sh
 scripts/sync-labels --repo OWNER/REPO --dry-run
 scripts/sync-labels --repo OWNER/REPO --apply
 ```
 
-`--apply` を渡さない場合も dry-run として動きますが、通常手順では意図を明確にするため `--dry-run` を明示してください。
-issue / PR title には原則として `feat:` や `chore:` の prefix を付けず、種別や領域は labels で表します。
-PR title を squash merge commit に使う運用の場合だけ、PR title に Conventional Commits prefix を許容します。運用が未確認なら prefix なしを既定にします。
+## Source of truth
 
-## Rulesets
+`repo-template`は共通baseの正本です。project type固有の追加物は`my-toolbox/github/templates/{app,tooling,security,dotfiles-public-safe}`で管理し、dotfilesの`repo-bootstrap`がbaseとoverlayをcomposeします。
 
-`rulesets/*.example.json` は `enforcement: disabled` を既定にしています。
-GitHub UI または管理用 script で内容を確認し、repo 固有の bypass actor と required check 名を調整してから `active` にしてください。
-`Baseline static checks` と `Dependency Review` は初期候補です。初回 PR 後に GitHub 上の実 check 名を確認してから active ruleset に反映してください。
+## GitHub側の手動設定
 
-## Validation
-
-ローカルで最低限確認する例:
-
-```sh
-git status --short
-find . -path ./.git -prune -o -type f -print | sort
-```
-
-YAML / workflow の厳密な検証は、生成先 repo の toolchain に合わせて追加してください。
+このrepositoryのファイルだけではbranch protection、ruleset、secrets、Dependabot alerts、private vulnerability reportingは完了しません。初期導入時は`docs/operations/manual-tasks.md`を確認してください。

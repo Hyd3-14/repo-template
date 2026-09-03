@@ -1,71 +1,36 @@
-# Manual Tasks
+# 手動作業
 
-Repository files cannot complete every GitHub-side setup step.
-Track manual work here so a newly generated repo is not considered production-ready before these items are handled.
+repository fileだけでは完了しないGitHub側の設定を記録します。
 
-## Initial GitHub Setup
+## 初期設定
 
-- [ ] Confirm default branch is `main`.
-- [ ] Enable Dependabot alerts.
-- [ ] Enable Dependabot security updates.
-- [ ] Enable secret scanning where available.
-- [ ] Set GitHub Actions default workflow permissions to read-only.
-- [ ] Confirm Actions can create and approve pull requests only if the repo intentionally allows it.
-- [ ] Configure private vulnerability reporting or document the private security contact in `SECURITY.md`.
-
-## Required Checks
-
-After the first PR has run, confirm the exact check names and use them in rulesets or branch protection.
-
-Recommended minimum:
-
-- [ ] `Baseline static checks`
-- [ ] `Dependency Review`
-- [ ] Treat these names as provisional until the first PR reports exact GitHub check names.
-
-## Rulesets
-
-The examples in `rulesets/` are intentionally disabled.
-
-- [ ] Review `rulesets/default-branch.example.json`.
-- [ ] Replace placeholder repository / target values if required by the import method.
-- [ ] Add bypass actors for emergency maintainers.
-- [ ] Add bypass actors for release automation or GitHub Apps when needed.
-- [ ] Confirm required check names match actual workflow check names.
-- [ ] Change `enforcement` from `disabled` to `active` only after the above is complete.
-- [ ] Document any bypass actor and reason in `docs/operations/repo-baseline.md`.
-
-## Secrets And Variables
-
-Do not add placeholder secrets to repository files.
-Create only the secrets that are actually required by generated repo workflows.
-
-- [ ] List required secrets in the generated repo README.
-- [ ] Create GitHub Actions secrets.
-- [ ] Create environment-specific secrets if deployment environments are used.
-- [ ] Record secret owners and rotation expectations in the generated repo's private operations notes.
-
-## GitHub Apps
-
-- [ ] Install required GitHub Apps, such as label sync or release automation.
-- [ ] Restrict app permissions to the minimum needed.
-- [ ] Add app bypass permissions to rulesets only when required.
-- [ ] Record app purpose and maintainer in `docs/operations/repo-baseline.md`.
+- [ ] default branchが`main`であることを確認する。
+- [ ] Dependabot alertsとsecurity updatesを有効にする。
+- [ ] 利用可能ならsecret scanningとprivate vulnerability reportingを有効にする。
+- [ ] GitHub Actionsのdefault token permissionをread-onlyにする。
+- [ ] `Baseline CI`と`Dependency Review`の実際のcheck名を確認する。
+- [ ] default branchのrulesetまたはbranch protectionへ必要なcheckを設定する。
 
 ## Labels
 
-`.github/labels.yml` is declarative source data.
+`.github/labels.yml`が宣言上の正本です。既存のGitHub labelsをrenameまたは削除する場合は、先にdry-runで差分を確認し、既存Issue/PRから外れる影響を人間が確認してください。
 
-- [ ] Run `scripts/sync-labels --repo OWNER/REPO --dry-run`.
-- [ ] Apply labels with `scripts/sync-labels --repo OWNER/REPO --apply`.
-- [ ] Confirm issue / PR triage uses labels rather than title prefixes.
+```sh
+scripts/sync-labels --repo OWNER/REPO --dry-run --prune
+```
 
-## Template Cleanup
+削除候補に問題がないと確認できた場合だけ、明示的な移行判断として次を実行します。
 
-For each generated repo:
+```sh
+scripts/sync-labels --repo OWNER/REPO --apply --prune
+```
 
-- [ ] Replace README title and description.
-- [ ] Replace issue template contact links.
-- [ ] Remove unused Dependabot ecosystems.
-- [ ] Add repo-specific validation commands.
-- [ ] Add repo-specific deployment or release manual tasks.
+通常の初期導入では`--prune`を使わず、create/updateだけを行います。旧labelのrename、既存Issue/PRへの付け替え、削除はこのPRの自動処理対象外です。
+
+## 生成先repoでの確認
+
+- [ ] READMEとAGENTSを生成先repoの目的に合わせて更新する。
+- [ ] 不要なDependabot ecosystemを削除する。
+- [ ] repo固有のlint、test、build、release手順を追加する。
+- [ ] secrets、variables、environments、GitHub Appを必要な範囲だけ設定する。
+- [ ] `./scripts/validate-template`相当の検証、またはdotfilesの`repo-preflight --agent`を実行する。

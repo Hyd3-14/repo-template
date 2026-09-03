@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sync the simple .github/labels.yml format with GitHub labels."""
+""".github/labels.ymlとGitHub labelsの差分を確認・同期する。"""
 
 from __future__ import annotations
 
@@ -73,8 +73,10 @@ def existing_labels(repo: str) -> dict[str, dict[str, str]]:
     return {item["name"]: item for item in labels}
 
 
-def sync(repo: str, labels: list[dict[str, str]], apply: bool) -> None:
+def sync(repo: str, labels: list[dict[str, str]], apply: bool, prune: bool) -> None:
     current = existing_labels(repo)
+    desired_names = {label["name"] for label in labels}
+
     for label in labels:
         name = label["name"]
         existing = current.get(name)
@@ -121,6 +123,25 @@ def sync(repo: str, labels: list[dict[str, str]], apply: bool) -> None:
         else:
             print(f"OK {name}")
 
+    stale_names = sorted(set(current) - desired_names)
+    for name in stale_names:
+        if prune:
+            print(f"DELETE {name}")
+            if apply:
+                run_gh(
+                    [
+                        "api",
+                        "--method",
+                        "DELETE",
+                        f"repos/{repo}/labels/{quote(name, safe='')}",
+                    ]
+                )
+        else:
+            print(f"STALE {name}")
+
+    if stale_names and apply and not prune:
+        print("stale labels are retained; pass --prune only after migration review")
+
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -128,12 +149,17 @@ def main() -> int:
     parser.add_argument("--file", default=".github/labels.yml")
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--prune",
+        action="store_true",
+        help="宣言にないGitHub labelsを削除候補として扱う",
+    )
     args = parser.parse_args()
 
     if args.apply and args.dry_run:
         parser.error("--apply and --dry-run are mutually exclusive")
     labels = parse_labels(Path(args.file))
-    sync(args.repo, labels, apply=args.apply)
+    sync(args.repo, labels, apply=args.apply, prune=args.prune)
     if not args.apply:
         print("dry-run: pass --apply to mutate GitHub labels")
     return 0

@@ -1,25 +1,25 @@
-name: 保守・設定変更
-description: 保守、設定、docs、CIなどの作業を起票する
+name: 機能追加・改善
+description: 新しい機能やrepoの改善を提案する
 title: ""
 labels:
-  - "type: chore"
+  - "type: feature"
 body:
   - type: textarea
-    id: task
-    attributes:
-      label: 作業内容
-      description: 何を変更するかを書いてください。
-    validations:
-      required: true
-  - type: textarea
-    id: why
+    id: problem
     attributes:
       label: 背景
-      description: なぜこの作業が必要かを書いてください。
+      description: 解決したい課題を書いてください。
     validations:
       required: true
   - type: textarea
-    id: done
+    id: proposal
+    attributes:
+      label: 提案
+      description: 最小の有効な解決策を書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
     attributes:
       label: 完了条件
       description: 観測可能な完了条件を書いてください。
