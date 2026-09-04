@@ -31,6 +31,7 @@ rootの人間向けファイルは日本語をdefaultとします。英語で使
 - Issue Formは`.github/ISSUE_TEMPLATE/bug.yml`、`feature.yml`、`chore.yml`を使う。
 - PR templateのcanonicalは`.github/PULL_REQUEST_TEMPLATE/default.md`とする。GitHubの通常のPR作成画面でも読み込めるよう、同内容の`.github/pull_request_template.md`をcompatibility aliasとして置く。
 - branchは`<type>/<issue-number>-<short-summary>`を標準とする。
+- Dependabotのminor/patch更新は自動マージ対象だが、PRをdraftにすると手動保留として扱う。
 
 ## Labels
 

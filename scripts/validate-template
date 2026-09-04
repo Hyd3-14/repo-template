@@ -124,6 +124,12 @@ legacy_label_references = {
     "60" + ": deps/major",
     "30" + ": status/needs-human-review",
 }
+legacy_label_patterns = {
+    legacy: re.compile(
+        rf"(?<![A-Za-z0-9_-]){re.escape(legacy)}(?![A-Za-z0-9_-])"
+    )
+    for legacy in legacy_label_references
+}
 for path in sorted(Path(".").rglob("*")):
     if not path.is_file() or ".git" in path.parts or path == Path(__file__):
         continue
@@ -131,8 +137,8 @@ for path in sorted(Path(".").rglob("*")):
         text = path.read_text(encoding="utf-8")
     except UnicodeDecodeError:
         continue
-    for legacy in legacy_label_references:
-        if legacy in text:
+    for legacy, pattern in legacy_label_patterns.items():
+        if pattern.search(text):
             fail(f"旧label参照が残っています: {path}: {legacy}")
 
 marker = Path(".github/hyd3-baseline.yml").read_text(encoding="utf-8")

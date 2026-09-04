@@ -17,6 +17,7 @@
 - label nameは英語、descriptionは日本語とし、`type:`、`priority:`、`area:`の3軸を使う。
 - `type:`はIssueの種別、`priority:`は対応優先度、`area:`は主な対象領域を表す。
 - 原則として`type:`は1つ、`priority:`は必要なIssueだけ、`area:`は主対象を1つ付与する。横断Issueでは`area:`を複数付与してよい。
+- Dependabotのminor/patch更新は自動マージ対象だが、PRのdraft状態を手動保留の手段として使える。
 
 ## Labels
 

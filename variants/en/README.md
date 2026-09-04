@@ -16,3 +16,5 @@ Keep the root machine-readable configuration unchanged. Workflows, Dependabot, l
 Issue titles do not use type prefixes. Pull request titles use Conventional Commits by default, and branches use `<type>/<issue-number>-<short-summary>`.
 
 Labels use the shared `type`, `priority`, and `area` axes. When migrating an existing repository, run `scripts/sync-labels` in dry-run mode first and pass explicit `--rename OLD=NEW` mappings so existing issue and pull request assignments are preserved.
+
+Dependabot minor and patch updates may be auto-merged; mark the pull request as draft to keep it on manual hold.
