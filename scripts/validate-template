@@ -14,16 +14,18 @@ expected_labels = {
     "type: feature",
     "type: bug",
     "type: chore",
-    "type: docs",
+    "type: documentation",
+    "type: test",
+    "type: security",
+    "priority: P0",
+    "priority: P1",
+    "priority: P2",
+    "area: app",
+    "area: database",
+    "area: dependency",
+    "area: devex",
     "area: ci",
-    "area: github",
-    "area: config",
-    "area: security",
-    "area: ai-agent",
-    "status: blocked",
-    "risk: security",
-    "risk: supply-chain",
-    "size: s",
+    "area: deployment",
 }
 expected_forms = {"bug.yml", "feature.yml", "chore.yml"}
 expected_heading_sets = {
@@ -105,6 +107,39 @@ for line in Path(".github/labels.yml").read_text(encoding="utf-8").splitlines():
         labels.append(match.group(2))
 if set(labels) != expected_labels or len(labels) != len(expected_labels):
     fail(f"label構成が標準と異なります: {labels}")
+
+legacy_label_references = {
+    "type" + ": docs",
+    "area" + ": github",
+    "area" + ": config",
+    "area" + ": security",
+    "area" + ": ai-agent",
+    "status" + ": blocked",
+    "risk" + ": security",
+    "risk" + ": supply-chain",
+    "size" + ": s",
+    "10" + ": type/feature",
+    "00" + ": needs-triage",
+    "20" + ": area/dependencies",
+    "60" + ": deps/major",
+    "30" + ": status/needs-human-review",
+}
+legacy_label_patterns = {
+    legacy: re.compile(
+        rf"(?<![A-Za-z0-9_-]){re.escape(legacy)}(?![A-Za-z0-9_-])"
+    )
+    for legacy in legacy_label_references
+}
+for path in sorted(Path(".").rglob("*")):
+    if not path.is_file() or ".git" in path.parts or path == Path(__file__):
+        continue
+    try:
+        text = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        continue
+    for legacy, pattern in legacy_label_patterns.items():
+        if pattern.search(text):
+            fail(f"旧label参照が残っています: {path}: {legacy}")
 
 marker = Path(".github/hyd3-baseline.yml").read_text(encoding="utf-8")
 if not re.search(r'^branch_naming:\s*["\']?<type>/<issue-number>-<short-summary>["\']?\s*$', marker, flags=re.MULTILINE):

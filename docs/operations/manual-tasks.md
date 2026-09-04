@@ -13,19 +13,28 @@ repository fileだけでは完了しないGitHub側の設定を記録します�
 
 ## Labels
 
-`.github/labels.yml`が宣言上の正本です。既存のGitHub labelsをrenameまたは削除する場合は、先にdry-runで差分を確認し、既存Issue/PRから外れる影響を人間が確認してください。
+`.github/labels.yml`が宣言上の正本です。labelの軸は`type`、`priority`、`area`です。
+
+通常の初期同期はcreate/updateだけにします。
 
 ```sh
-scripts/sync-labels --repo OWNER/REPO --dry-run --prune
+scripts/sync-labels --repo OWNER/REPO --dry-run
+scripts/sync-labels --repo OWNER/REPO --apply
 ```
 
-削除候補に問題がないと確認できた場合だけ、明示的な移行判断として次を実行します。
+既存labelを新しい名前へ移行する場合は、対象のrename mappingを明示し、先にdry-runで`RENAME`、`CREATE`、`UPDATE`、`DELETE`の差分を確認します。`RENAME`はGitHub APIの改称を使うため、既存Issue/PRへの付与を保てます。
 
 ```sh
-scripts/sync-labels --repo OWNER/REPO --apply --prune
+scripts/sync-labels --repo OWNER/REPO --dry-run --rename 'OLD LABEL=NEW LABEL' --prune
 ```
 
-通常の初期導入では`--prune`を使わず、create/updateだけを行います。旧labelのrename、既存Issue/PRへの付け替え、削除はこのPRの自動処理対象外です。
+dry-runの出力と既存Issue/PRの付与状況を確認し、削除候補を残さないと判断できた場合だけ明示的に適用します。
+
+```sh
+scripts/sync-labels --repo OWNER/REPO --apply --rename 'OLD LABEL=NEW LABEL' --prune
+```
+
+`--rename`は対象repoごとに指定し、共通scriptへrepo固有のmappingを埋め込まないでください。通常のsyncでは`--prune`を使わず、不要labelの削除は移行判断と同時に行います。
 
 ## 生成先repoでの確認
 

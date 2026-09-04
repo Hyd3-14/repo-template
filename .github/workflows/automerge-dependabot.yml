@@ -24,7 +24,8 @@ jobs:
     name: Guarded automerge
     if: >
       github.event_name == 'pull_request_target' &&
-      github.actor == 'dependabot[bot]'
+      github.actor == 'dependabot[bot]' &&
+      github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     steps:
       - name: Check Dependabot PR metadata
@@ -94,6 +95,7 @@ jobs:
             echo "has_pr=true"
             echo "url=$(jq -r '.html_url' <<< "$prs")"
             echo "number=$(jq -r '.number' <<< "$prs")"
+            echo "draft=$(jq -r '.draft' <<< "$prs")"
           } >> "$GITHUB_OUTPUT"
 
       - name: Fetch Dependabot metadata
@@ -116,13 +118,11 @@ jobs:
           SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           set -euo pipefail
-          labels=$(gh api "/repos/$REPO/issues/$PR_NUMBER/labels" --jq 'map(.name)')
-          has_blocked=$(jq -r 'contains(["status: blocked"])' <<< "$labels")
-          if [ "$has_blocked" = "true" ]; then
+          if [ "${{ steps.pr.outputs.draft }}" = "true" ]; then
+            echo "draft PR remains a manual hold"
             echo "ready=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-
           required='["Baseline static checks","Dependency Review"]'
           check_runs=$(gh api "/repos/$REPO/commits/$SHA/check-runs" --jq '.check_runs')
           missing=$(jq -r --argjson required "$required" '
