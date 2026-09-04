@@ -10,42 +10,50 @@
   color: "C5DEF5"
   description: "保守、設定、運用改善"
 
-- name: "type: docs"
+- name: "type: documentation"
   color: "0075CA"
   description: "ドキュメント変更"
+
+- name: "type: test"
+  color: "1D76DB"
+  description: "テスト、検証、再現手順の追加"
+
+- name: "type: security"
+  color: "B60205"
+  description: "セキュリティ対応"
+
+- name: "priority: P0"
+  color: "B60205"
+  description: "最優先で対応する"
+
+- name: "priority: P1"
+  color: "D93F0B"
+  description: "優先して対応する"
+
+- name: "priority: P2"
+  color: "FBCA04"
+  description: "通常の優先度で対応する"
+
+- name: "area: app"
+  color: "1D76DB"
+  description: "アプリケーションの挙動やUI"
+
+- name: "area: database"
+  color: "5319E7"
+  description: "データベース、schema、migration"
+
+- name: "area: dependency"
+  color: "FBCA04"
+  description: "依存関係、外部パッケージ"
+
+- name: "area: devex"
+  color: "A371F7"
+  description: "開発者体験、CLI、ローカル環境"
 
 - name: "area: ci"
   color: "5319E7"
   description: "CI、GitHub Actions、検証基盤"
 
-- name: "area: github"
-  color: "2088FF"
-  description: "Issue、PR、labels、rulesets、DependabotなどGitHub運用"
-
-- name: "area: config"
-  color: "1D76DB"
-  description: "設定ファイル、CLI、開発環境の構成"
-
-- name: "area: security"
-  color: "B60205"
-  description: "セキュリティ、秘密情報、脆弱性対応"
-
-- name: "area: ai-agent"
-  color: "A371F7"
-  description: "AGENTS、Skill、AI agent運用"
-
-- name: "status: blocked"
-  color: "E99695"
-  description: "外部要因または判断待ちで停止中"
-
-- name: "risk: security"
-  color: "EE0701"
-  description: "秘密情報、権限、脆弱性に関するリスク"
-
-- name: "risk: supply-chain"
-  color: "FBCA04"
-  description: "依存関係、外部アクション、配布経路に関するリスク"
-
-- name: "size: s"
-  color: "C2E0C6"
-  description: "小さな変更"
+- name: "area: deployment"
+  color: "0E8A16"
+  description: "デプロイ、ホスティング、リリース"

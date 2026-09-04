@@ -14,3 +14,5 @@ Copy these files to a generated repository when English is the preferred human-f
 Keep the root machine-readable configuration unchanged. Workflows, Dependabot, labels validation, and branch policy are shared rather than duplicated by locale.
 
 Issue titles do not use type prefixes. Pull request titles use Conventional Commits by default, and branches use `<type>/<issue-number>-<short-summary>`.
+
+Labels use the shared `type`, `priority`, and `area` axes. When migrating an existing repository, run `scripts/sync-labels` in dry-run mode first and pass explicit `--rename OLD=NEW` mappings so existing issue and pull request assignments are preserved.

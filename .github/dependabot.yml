@@ -10,8 +10,7 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "type: chore"
-      - "area: ci"
-      - "risk: supply-chain"
+      - "area: dependency"
     groups:
       github-actions-minor-patch:
         update-types:
@@ -31,7 +30,7 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "type: chore"
-      - "risk: supply-chain"
+      - "area: dependency"
     groups:
       npm-minor-patch:
         update-types:
@@ -51,7 +50,7 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "type: chore"
-      - "risk: supply-chain"
+      - "area: dependency"
     groups:
       docker-minor-patch:
         update-types:

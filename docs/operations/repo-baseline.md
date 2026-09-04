@@ -14,7 +14,19 @@
 - PR titleは原則Conventional Commits形式とする。
 - PR本文は`関連Issue`、`概要`、`変更点`、`動作確認`、`補足`の軽量構成とする。
 - branchは`<type>/<issue-number>-<short-summary>`とする。
-- label nameは英語、descriptionは日本語とし、`type:`、`area:`、`status:`、`risk:`、`size:`の最小カテゴリを使う。
+- label nameは英語、descriptionは日本語とし、`type:`、`priority:`、`area:`の3軸を使う。
+- `type:`はIssueの種別、`priority:`は対応優先度、`area:`は主な対象領域を表す。
+- 原則として`type:`は1つ、`priority:`は必要なIssueだけ、`area:`は主対象を1つ付与する。横断Issueでは`area:`を複数付与してよい。
+
+## Labels
+
+`.github/labels.yml`が宣言上の正本です。共通baselineは次の15 labelsです。
+
+- `type: feature`、`type: bug`、`type: chore`、`type: documentation`、`type: test`、`type: security`
+- `priority: P0`、`priority: P1`、`priority: P2`
+- `area: app`、`area: database`、`area: dependency`、`area: devex`、`area: ci`、`area: deployment`
+
+既存labelを移行する場合は、共通scriptへrepo固有の対応表を埋め込まず、対象repoの実行時に`--rename OLD=NEW`を明示します。GitHub APIの改称を使うため、既存Issue/PRへの付与を保ったまま移行できます。削除を伴う場合は、先にdry-runで差分と利用状況を確認してください。
 
 ## Required files
 

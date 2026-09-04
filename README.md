@@ -8,6 +8,7 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 - `.editorconfig`、`.gitattributes`、`.gitignore`
 - 日本語defaultのIssue FormsとPR template
 - `.github/labels.yml`のlabels baseline
+- `scripts/sync-labels`: GitHub labels を `labels.yml` に同期する helper
 - Dependabot、dependency review、GitHub Actions static check、baseline CI
 - ruleset exampleと初期設定docs
 
@@ -33,14 +34,17 @@ rootの人間向けファイルは日本語をdefaultとします。英語で使
 
 ## Labels
 
-`.github/labels.yml`がこのtemplateのlabels baselineです。名前は英語のmachine-readable identifier、descriptionは日本語とします。種別、領域、状態、リスク、規模を必要最小限のlabelで表します。
+`.github/labels.yml`がこのtemplateのlabels baselineです。名前は英語のmachine-readable identifier、descriptionは日本語とします。`type`、`priority`、`area`の3軸で分類し、Issue Formの初期値とDependabotの自動付与にも同じ名前を使います。
 
-GitHub上の既存labelを変更する場合は、まずdry-runで差分と削除候補を確認し、既存Issue/PRへの影響を人間が確認してください。通常のsyncはcreate/updateに限定し、削除は明示的な移行判断がある場合だけ行います。
+GitHub上の既存labelを変更する場合は、まずdry-runで差分、改称、削除候補を確認し、既存Issue/PRへの影響を人間が確認してください。通常のsyncはcreate/updateに限定し、削除は明示的な移行判断がある場合だけ行います。
 
 ```sh
 scripts/sync-labels --repo OWNER/REPO --dry-run
-scripts/sync-labels --repo OWNER/REPO --apply
+scripts/sync-labels --repo OWNER/REPO --dry-run --rename 'OLD LABEL=NEW LABEL' --prune
+scripts/sync-labels --repo OWNER/REPO --apply --rename 'OLD LABEL=NEW LABEL' --prune
 ```
+
+`--rename OLD=NEW`は、GitHub APIのlabel改称を使って既存Issue/PRへの付与を保ったまま移行する明示的なmappingです。`--prune`を付けたdry-runで`DELETE`候補を確認し、不要なlabelを削除できると判断した場合だけ`--apply --prune`を実行してください。
 
 ## Source of truth
 
