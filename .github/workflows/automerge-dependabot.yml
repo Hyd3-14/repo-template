@@ -1,32 +1,40 @@
 name: Dependabot Automerge
 
-on:
+on: # zizmor: ignore[dangerous-triggers] Required for API-only Dependabot gating; this workflow never checks out or executes PR code.
   workflow_run:
     workflows:
       - Baseline CI
       - Dependency Review
+      - GitHub Actions Static Checks
     types:
       - completed
+    branches:
+      - main
   pull_request_target:
+    branches:
+      - main
     types:
       - labeled
       - synchronize
       - reopened
       - ready_for_review
 
-permissions:
-  contents: write
-  issues: read
-  pull-requests: write
+permissions: {}
 
 jobs:
   automerge:
     name: Guarded automerge
     if: >
       github.event_name == 'pull_request_target' &&
-      github.actor == 'dependabot[bot]' &&
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.pull_request.draft != true
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write # Needed to enable auto-merge and delete the merged branch.
+      checks: read # Needed to verify required check runs before enabling auto-merge.
+      pull-requests: write # Needed to read PR metadata and enable auto-merge.
     steps:
       - name: Check Dependabot PR metadata
         id: metadata
@@ -37,15 +45,16 @@ jobs:
       - name: Confirm required checks passed
         id: checks
         if: >
-          github.actor == 'dependabot[bot]' &&
+          github.event.pull_request.user.login == 'dependabot[bot]' &&
           contains(fromJSON('["version-update:semver-minor", "version-update:semver-patch"]'), steps.metadata.outputs.update-type)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
           SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
         run: |
           set -euo pipefail
-          required='["Baseline static checks","Dependency Review"]'
+          required='["Baseline static checks","Dependency Review","GitHub Actions Static Checks"]'
           check_runs=$(gh api "/repos/$REPO/commits/$SHA/check-runs" --jq '.check_runs')
           missing=$(jq -r --argjson required "$required" '
             $required[]
@@ -64,18 +73,26 @@ jobs:
 
       - name: Enable auto-merge for minor and patch updates
         if: >
-          github.actor == 'dependabot[bot]' &&
+          github.event.pull_request.user.login == 'dependabot[bot]' &&
           contains(fromJSON('["version-update:semver-minor", "version-update:semver-patch"]'), steps.metadata.outputs.update-type) &&
           steps.checks.outputs.ready == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
+        shell: bash
         run: gh pr merge "$PR_URL" --auto --squash --delete-branch
 
   automerge-after-checks:
     name: Re-check after required workflows
-    if: github.event_name == 'workflow_run'
+    if: >
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write # Needed to enable auto-merge and delete the merged branch.
+      checks: read # Needed to verify required check runs before enabling auto-merge.
+      pull-requests: write # Needed to read PR metadata and enable auto-merge.
     steps:
       - name: Find pull request
         id: pr
@@ -83,6 +100,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
           SHA: ${{ github.event.workflow_run.head_sha }}
+        shell: bash
         run: |
           prs=$(gh api "/repos/$REPO/commits/$SHA/pulls" \
             --header "Accept: application/vnd.github+json" \
@@ -96,6 +114,8 @@ jobs:
             echo "url=$(jq -r '.html_url' <<< "$prs")"
             echo "number=$(jq -r '.number' <<< "$prs")"
             echo "draft=$(jq -r '.draft' <<< "$prs")"
+            echo "base_repo=$(jq -r '.base.repo.full_name' <<< "$prs")"
+            echo "head_repo=$(jq -r '.head.repo.full_name' <<< "$prs")"
           } >> "$GITHUB_OUTPUT"
 
       - name: Fetch Dependabot metadata
@@ -110,20 +130,24 @@ jobs:
         if: >
           steps.pr.outputs.has_pr == 'true' &&
           github.event.workflow_run.conclusion == 'success' &&
+          steps.pr.outputs.base_repo == github.repository &&
+          steps.pr.outputs.head_repo == github.repository &&
           contains(fromJSON('["version-update:semver-minor", "version-update:semver-patch"]'), steps.metadata.outputs.update-type)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ steps.pr.outputs.number }}
           SHA: ${{ github.event.workflow_run.head_sha }}
+          DRAFT: ${{ steps.pr.outputs.draft }}
+        shell: bash
         run: |
           set -euo pipefail
-          if [ "${{ steps.pr.outputs.draft }}" = "true" ]; then
+          if [ "$DRAFT" = "true" ]; then
             echo "draft PR remains a manual hold"
             echo "ready=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          required='["Baseline static checks","Dependency Review"]'
+          required='["Baseline static checks","Dependency Review","GitHub Actions Static Checks"]'
           check_runs=$(gh api "/repos/$REPO/commits/$SHA/check-runs" --jq '.check_runs')
           missing=$(jq -r --argjson required "$required" '
             $required[]
@@ -145,4 +169,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ steps.pr.outputs.url }}
+        shell: bash
         run: gh pr merge "$PR_URL" --auto --squash --delete-branch

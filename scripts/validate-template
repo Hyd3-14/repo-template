@@ -60,6 +60,9 @@ required = [
     Path(".github/labels.yml"),
     Path(".github/workflows/ci.yml"),
     Path(".github/workflows/dependency-review.yml"),
+    Path(".github/workflows/dependabot-triage.yml"),
+    Path(".github/workflows/automerge-dependabot.yml"),
+    Path(".github/workflows/github-actions-static-checks.yml"),
     Path(".github/PULL_REQUEST_TEMPLATE/default.md"),
     Path(".github/pull_request_template.md"),
 ]
@@ -144,6 +147,58 @@ for path in sorted(Path(".").rglob("*")):
 marker = Path(".github/hyd3-baseline.yml").read_text(encoding="utf-8")
 if not re.search(r'^branch_naming:\s*["\']?<type>/<issue-number>-<short-summary>["\']?\s*$', marker, flags=re.MULTILINE):
     fail("branch_namingが標準と一致しません")
+if not re.search(r'^actions_static_checks:\s*\.github/workflows/github-actions-static-checks\.yml\s*$', marker, flags=re.MULTILINE):
+    fail("actions_static_checksが標準と一致しません")
+for key, value in {
+    "external_action_ref": "full-40-character-sha",
+    "checkout_persist_credentials": "false",
+    "job_permissions": "explicit",
+    "job_timeout_minutes": "required",
+}.items():
+    if not re.search(rf'^\s+{re.escape(key)}:\s*{re.escape(value)}\s*$', marker, flags=re.MULTILINE):
+        fail(f"Actions policyの{key}が標準と一致しません")
+
+dependabot = Path(".github/dependabot.yml").read_text(encoding="utf-8")
+if dependabot.count("default-days: 7") != 3:
+    fail("Dependabotの全updaterに7日間のcooldownが必要です")
+
+static_checks = Path(".github/workflows/github-actions-static-checks.yml").read_text(encoding="utf-8")
+for tool in ["actionlint", "zizmor", "ghalint", "pinact"]:
+    if not re.search(rf'^\s+name:\s*{re.escape(tool)}\s*$', static_checks, flags=re.MULTILINE):
+        fail(f"GitHub Actions static checksに{tool} jobが必要です")
+
+automerge = Path(".github/workflows/automerge-dependabot.yml").read_text(encoding="utf-8")
+for required_check in ["Baseline static checks", "Dependency Review", "GitHub Actions Static Checks"]:
+    if required_check not in automerge:
+        fail(f"Dependabot auto-mergeのrequired checkが不足しています: {required_check}")
+if re.search(r"github\.actor\s*==\s*['\"]dependabot\[bot\]['\"]", automerge):
+    fail("Dependabot auto-mergeでspoof可能なgithub.actor判定を使わないでください")
+triage = Path(".github/workflows/dependabot-triage.yml").read_text(encoding="utf-8")
+if re.search(r"github\.actor\s*==\s*['\"]dependabot\[bot\]['\"]", triage):
+    fail("Dependabot triageでspoof可能なgithub.actor判定を使わないでください")
+
+for path in sorted(Path(".github/workflows").glob("*.y*ml")):
+    workflow = path.read_text(encoding="utf-8")
+    if not re.search(r'^permissions:', workflow, flags=re.MULTILINE):
+        fail(f"workflowにpermissionsが必要です: {path}")
+    checkout_count = len(re.findall(r'^\s+uses:\s+actions/checkout@', workflow, flags=re.MULTILINE))
+    persist_false_count = len(re.findall(r'^\s+persist-credentials:\s*false\s*$', workflow, flags=re.MULTILINE))
+    if checkout_count != persist_false_count:
+        fail(f"actions/checkoutごとにpersist-credentials: falseが必要です: {path}")
+    for line_number, line in enumerate(workflow.splitlines(), start=1):
+        match = re.match(r'^\s+uses:\s*([^\s#]+)(?:\s+#\s*(.*?))?\s*$', line)
+        if not match:
+            continue
+        action, annotation = match.groups()
+        if action.startswith("./") or action.startswith("docker://"):
+            continue
+        if "@" not in action:
+            fail(f"外部Actionのrefがありません: {path}:{line_number}")
+        ref = action.rsplit("@", 1)[1]
+        if not re.fullmatch(r"[0-9a-f]{40}", ref):
+            fail(f"外部Actionはfull 40-character SHAが必要です: {path}:{line_number}")
+        if not annotation or not re.search(r"v?\d+\.\d+\.\d+", annotation):
+            fail(f"外部Actionのversion annotationが必要です: {path}:{line_number}")
 
 print("[OK] repository template contract")
 PY

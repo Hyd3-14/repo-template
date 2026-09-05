@@ -18,3 +18,5 @@ Issue titles do not use type prefixes. Pull request titles use Conventional Comm
 Labels use the shared `type`, `priority`, and `area` axes. When migrating an existing repository, run `scripts/sync-labels` in dry-run mode first and pass explicit `--rename OLD=NEW` mappings so existing issue and pull request assignments are preserved.
 
 Dependabot minor and patch updates may be auto-merged; mark the pull request as draft to keep it on manual hold.
+
+The shared baseline runs `actionlint` with ShellCheck integration, `zizmor`, `ghalint`, and `pinact` from `.github/workflows/github-actions-static-checks.yml`. Every job declares minimal `permissions` and `timeout-minutes`, external actions use full 40-character commit SHAs, and checkout uses `persist-credentials: false`. Dependabot auto-merge requires `Baseline static checks`, `Dependency Review`, and `GitHub Actions Static Checks` to pass; major updates remain manual review.
