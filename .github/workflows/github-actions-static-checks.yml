@@ -53,7 +53,7 @@ jobs:
           advanced-security: false
           collect: all
           token: ${{ github.token }}
-          version: v1.30.0
+          version: v1.29.0
 
   ghalint:
     name: ghalint
