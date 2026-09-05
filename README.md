@@ -33,7 +33,7 @@ rootの人間向けファイルは日本語をdefaultとします。英語で使
 - branchは`<type>/<issue-number>-<short-summary>`を標準とする。
 - GitHub Actionsの各jobは必要最小限の`permissions`と`timeout-minutes`を明示し、外部Actionはfull 40-character commit SHA、checkoutは`persist-credentials: false`とする。GitHub contextをshellへ渡す場合はstep-level `env:`を介する。
 - `.github/workflows/github-actions-static-checks.yml`で`actionlint`（ShellCheck連携）、`zizmor`、`ghalint`、`pinact`を検証する。
-- Dependabotは`github-actions`、`npm`、`docker`をweeklyで更新し、minor/patchをgroupingする。majorは人間レビューとし、minor/patchも`Baseline static checks`、`Dependency Review`、`GitHub Actions Static Checks`が成功した場合だけ自動マージする。PRをdraftにすると手動保留として扱う。
+- Dependabotは`github-actions`、`npm`、`docker`をweeklyで更新し、minor/patchをgroupingする。majorは人間レビューとし、minor/patchも`Dependabot auto-merge eligibility`、`Baseline static checks`、`Dependency Review`、`GitHub Actions Static Checks`が成功した場合だけ自動マージする。PRをdraftにすると手動保留として扱う。
 
 ## Labels
 
