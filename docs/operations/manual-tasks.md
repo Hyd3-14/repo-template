@@ -16,7 +16,7 @@ repository fileだけでは完了しないGitHub側の設定を記録します�
 
 ## Labels
 
-`.github/labels.yml`が宣言上の正本です。labelの軸は`type`、`priority`、`area`です。
+`.github/labels.yml`が宣言上の正本です。labelの軸は`type`、`priority`、`area`、`status`です。`status`はIssueの現在状態を表し、必要なOpen Issueに最大1つ付与します。
 
 通常の初期同期はcreate/updateだけにします。
 

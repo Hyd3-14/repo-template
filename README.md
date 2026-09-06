@@ -37,7 +37,7 @@ rootの人間向けファイルは日本語をdefaultとします。英語で使
 
 ## Labels
 
-`.github/labels.yml`がこのtemplateのlabels baselineです。名前は英語のmachine-readable identifier、descriptionは日本語とします。`type`、`priority`、`area`の3軸で分類し、Issue Formの初期値とDependabotの自動付与にも同じ名前を使います。
+`.github/labels.yml`がこのtemplateのlabels baselineです。名前は英語のmachine-readable identifier、descriptionは日本語とします。`type`、`priority`、`area`、`status`の4軸で分類し、Issue Formの初期値とDependabotの自動付与にも同じ名前を使います。`status`はIssueの現在状態を表し、必要なOpen Issueに最大1つ付与します。
 
 GitHub上の既存labelを変更する場合は、まずdry-runで差分、改称、削除候補を確認し、既存Issue/PRへの影響を人間が確認してください。通常のsyncはcreate/updateに限定し、削除は明示的な移行判断がある場合だけ行います。
 
