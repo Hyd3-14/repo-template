@@ -14,9 +14,9 @@
 - PR titleは原則Conventional Commits形式とする。
 - PR本文は`関連Issue`、`概要`、`変更点`、`動作確認`、`補足`の軽量構成とする。
 - branchは`<type>/<issue-number>-<short-summary>`とする。
-- label nameは英語、descriptionは日本語とし、`type:`、`priority:`、`area:`の3軸を使う。
-- `type:`はIssueの種別、`priority:`は対応優先度、`area:`は主な対象領域を表す。
-- 原則として`type:`は1つ、`priority:`は必要なIssueだけ、`area:`は主対象を1つ付与する。横断Issueでは`area:`を複数付与してよい。
+- label nameは英語、descriptionは日本語とし、`type:`、`priority:`、`area:`、`status:`の4軸を使う。
+- `type:`はIssueの種別、`priority:`は対応優先度、`area:`は主な対象領域、`status:`は現在のライフサイクル状態を表す。
+- 原則として`type:`は1つ、`priority:`は必要なIssueだけ、`area:`は主対象を1つ付与する。横断Issueでは`area:`を複数付与してよい。`status:`は必要なIssueに最大1つ付与し、状態遷移時は付け替える。
 - Dependabotは`github-actions`、`npm`、`docker`をweeklyで更新し、minor/patchをgroupingする。更新には7日間のcooldownを設け、majorは人間レビューとする。
 - Dependabotのminor/patch更新は、`Dependabot auto-merge eligibility`と、`Baseline static checks`、`Dependency Review`、`GitHub Actions Static Checks`が成功し、非draftの同一repository PRである場合だけ自動マージ対象とする。PRのdraft状態は手動保留の手段として維持する。
 
@@ -36,13 +36,16 @@ Dependabotのmetadata取得・label付与とrequired check後のauto-mergeには
 
 ## Labels
 
-`.github/labels.yml`が宣言上の正本です。共通baselineは次の15 labelsです。
+`.github/labels.yml`が宣言上の正本です。共通baselineは次の19 labelsです。
 
 - `type: feature`、`type: bug`、`type: chore`、`type: documentation`、`type: test`、`type: security`
 - `priority: P0`、`priority: P1`、`priority: P2`
 - `area: app`、`area: database`、`area: dependency`、`area: devex`、`area: ci`、`area: deployment`
+- `status: needs-discussion`、`status: ready`、`status: in-progress`、`status: blocked`
 
 既存labelを移行する場合は、共通scriptへrepo固有の対応表を埋め込まず、対象repoの実行時に`--rename OLD=NEW`を明示します。GitHub APIの改称を使うため、既存Issue/PRへの付与を保ったまま移行できます。削除を伴う場合は、先にdry-runで差分と利用状況を確認してください。
+
+`status:`はOpen Issueの必須項目にはせず、相談待ち・着手可能・作業中・ブロック中を検索したい場合に使います。完了はGitHub IssueのOpen/Closedを正本とし、`status: done`や`status: closed`は追加しません。GitHub ProjectsのStatusを本格運用する場合は、二重管理コストを評価し、Project側を正本にする選択肢を残します。
 
 ## Required files
 

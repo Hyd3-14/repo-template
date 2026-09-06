@@ -57,3 +57,19 @@
 - name: "area: deployment"
   color: "0E8A16"
   description: "デプロイ、ホスティング、リリース"
+
+- name: "status: needs-discussion"
+  color: "D93F0B"
+  description: "オーナーやメンバーとの相談、意思決定が必要"
+
+- name: "status: ready"
+  color: "0E8A16"
+  description: "前提が揃っており着手可能"
+
+- name: "status: in-progress"
+  color: "1D76DB"
+  description: "現在作業中"
+
+- name: "status: blocked"
+  color: "D73A4A"
+  description: "外部要因、依存関係、権限等により進行不能"
