@@ -13,6 +13,7 @@ updates:
     labels:
       - "type: chore"
       - "area: dependency"
+      - "area: ci"
     groups:
       github-actions-minor-patch:
         update-types:
