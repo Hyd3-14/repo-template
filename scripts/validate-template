@@ -191,6 +191,24 @@ dependabot = Path(".github/dependabot.yml").read_text(encoding="utf-8")
 if dependabot.count("default-days: 7") != 3:
     fail("Dependabotの全updaterに7日間のcooldownが必要です")
 
+expected_dependabot_labels = {
+    "github-actions": {"type: chore", "area: dependency", "area: ci"},
+    "npm": {"type: chore", "area: dependency"},
+    "docker": {"type: chore", "area: dependency"},
+}
+for ecosystem, expected in expected_dependabot_labels.items():
+    match = re.search(
+        rf"(?ms)^  - package-ecosystem: {re.escape(ecosystem)}\n(?P<body>.*?)(?=^  - package-ecosystem: |\Z)",
+        dependabot,
+    )
+    if not match:
+        fail(f"Dependabot updaterがありません: {ecosystem}")
+    actual = set(
+        re.findall(r'^      - ["\']([^"\']+)["\']\s*$', match.group("body"), flags=re.MULTILINE)
+    )
+    if actual != expected:
+        fail(f"Dependabotのlabel構成が標準と異なります: {ecosystem}: {sorted(actual)}")
+
 static_checks = Path(".github/workflows/github-actions-static-checks.yml").read_text(encoding="utf-8")
 for tool in ["actionlint", "zizmor", "ghalint", "pinact"]:
     if not re.search(rf'^\s+name:\s*{re.escape(tool)}\s*$', static_checks, flags=re.MULTILINE):
