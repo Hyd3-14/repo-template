@@ -1,6 +1,5 @@
 name: 保守・設定変更
 description: 保守、設定、docs、CIなどの作業を起票する
-title: ""
 labels:
   - "type: chore"
 body:
