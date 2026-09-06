@@ -88,8 +88,8 @@ for path in sorted(forms_dir.glob("*.yml")):
         continue
     text = path.read_text(encoding="utf-8")
     titles = re.findall(r"^title:\s*(.*?)\s*$", text, flags=re.MULTILINE)
-    if titles != ['""']:
-        fail(f"Issue Formのtitleは空文字列である必要があります: {path}")
+    if titles:
+        fail(f"Issue Formのtitleは設定しないでください: {path}")
     if re.search(r"\[(?:Bug|Feature|Chore)\]:|^title:\s*[\"'](?:bug|feat|chore):", text, flags=re.MULTILINE):
         fail(f"Issue Formに種別prefixが残っています: {path}")
 
