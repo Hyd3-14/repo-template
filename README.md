@@ -12,10 +12,6 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 - Dependabot、GitHub Actions静的検証（actionlint、ShellCheck、zizmor、ghalint、pinact）、baseline CI
 - ruleset exampleと初期設定docs
 
-## 言語variant
-
-rootの人間向けファイルは日本語をdefaultとします。英語で使う場合は`variants/en/`のREADME、AGENTS、Issue Forms、PR template、SECURITYを生成先repoへコピーしてください。workflow、Dependabot、labelsのvalidationなどmachine-readableな共通設定はrootだけで管理します。
-
 ## Use this template
 
 1. GitHubの`Use this template`から新規repoを作成する。

@@ -40,13 +40,6 @@ expected_heading_sets = {
         "## 動作確認",
         "## 補足",
     ],
-    "en": [
-        "## Related issue",
-        "## Summary",
-        "## Changes",
-        "## Verification",
-        "## Notes",
-    ],
 }
 
 def fail(message: str) -> None:
