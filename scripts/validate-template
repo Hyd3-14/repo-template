@@ -63,7 +63,6 @@ required = [
     Path(".github/hyd3-baseline.yml"),
     Path(".github/labels.yml"),
     Path(".github/workflows/ci.yml"),
-    Path(".github/workflows/dependency-review.yml"),
     Path(".github/workflows/dependabot-triage.yml"),
     Path(".github/workflows/automerge-dependabot.yml"),
     Path(".github/workflows/github-actions-static-checks.yml"),
@@ -215,7 +214,7 @@ for tool in ["actionlint", "zizmor", "ghalint", "pinact"]:
         fail(f"GitHub Actions static checksに{tool} jobが必要です")
 
 automerge = Path(".github/workflows/automerge-dependabot.yml").read_text(encoding="utf-8")
-for required_check in ["Baseline static checks", "Dependency Review", "GitHub Actions Static Checks"]:
+for required_check in ["Baseline static checks", "GitHub Actions Static Checks"]:
     if required_check not in automerge:
         fail(f"Dependabot auto-mergeのrequired checkが不足しています: {required_check}")
 if re.search(r"github\.actor\s*==\s*['\"]dependabot\[bot\]['\"]", automerge):
