@@ -24,7 +24,7 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 
 - Issue titleには種別prefixを付けず、種別はlabelsで表す。
 - PR titleは原則Conventional Commits形式とし、squash merge時の履歴へそのまま利用できるようにする。
-- Issue Formは`.github/ISSUE_TEMPLATE/bug.yml`、`feature.yml`、`chore.yml`を使う。
+- Issue Formは`feature`、`bug`、`chore`、`documentation`、`test`、`security`の6 typeに対応する。
 - PR templateのcanonicalは`.github/PULL_REQUEST_TEMPLATE/default.md`とする。GitHubの通常のPR作成画面でも読み込めるよう、同内容の`.github/pull_request_template.md`をcompatibility aliasとして置く。
 - branchは`<type>/<issue-number>-<short-summary>`を標準とする。
 - GitHub Actionsの各jobは必要最小限の`permissions`と`timeout-minutes`を明示し、外部Actionはfull 40-character commit SHA、checkoutは`persist-credentials: false`とする。GitHub contextをshellへ渡す場合はstep-level `env:`を介する。

@@ -1,0 +1,36 @@
+name: ドキュメント変更
+description: READMEや設計・運用ドキュメントの変更を起票する
+labels:
+  - "type: documentation"
+body:
+  - type: textarea
+    id: target
+    attributes:
+      label: 対象
+      description: 変更する文書や説明対象を書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: purpose
+    attributes:
+      label: 背景
+      description: なぜ更新が必要かを書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: 完了条件
+      description: 観測可能な完了条件を書いてください。
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: 補足
+      description: 関連Issue、対象外、参考資料など。
+    validations:
+      required: false
