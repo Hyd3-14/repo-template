@@ -1,0 +1,43 @@
+name: テスト・検証
+description: テスト追加、再現検証、品質確認を起票する
+labels:
+  - "type: test"
+body:
+  - type: textarea
+    id: scope
+    attributes:
+      label: 対象
+      description: 何をテスト・検証するかを書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: purpose
+    attributes:
+      label: 背景
+      description: 何を確認・防止するための作業かを書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: method
+    attributes:
+      label: 検証方法
+      description: テスト方法、再現条件、期待結果などを書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: 完了条件
+      description: 観測可能な完了条件を書いてください。
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: 補足
+      description: 関連Issue、対象外、環境差など。
+    validations:
+      required: false
