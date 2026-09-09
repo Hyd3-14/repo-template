@@ -31,7 +31,7 @@ expected_labels = {
     "status: in-progress",
     "status: blocked",
 }
-expected_forms = {"bug.yml", "feature.yml", "chore.yml"}
+expected_forms = {"bug.yml", "feature.yml", "chore.yml", "documentation.yml", "test.yml", "security.yml"}
 expected_heading_sets = {
     "ja": [
         "## 関連Issue",
@@ -59,6 +59,7 @@ required = [
     Path(".github/workflows/dependabot-triage.yml"),
     Path(".github/workflows/automerge-dependabot.yml"),
     Path(".github/workflows/github-actions-static-checks.yml"),
+    Path(".github/workflows/sync-labels.yml"),
     Path(".github/PULL_REQUEST_TEMPLATE/default.md"),
     Path(".github/pull_request_template.md"),
 ]

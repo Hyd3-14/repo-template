@@ -1,0 +1,40 @@
+name: セキュリティ改善
+description: hardening、権限見直し、安全性検証などを起票する
+labels:
+  - "type: security"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        秘密情報、token、個人情報、悪用可能な未公開脆弱性の詳細を公開Issueへ記載しないでください。非公開報告が必要な場合はPrivate vulnerability reporting等のprivate経路を利用してください。
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景
+      description: 安全に公開できる範囲で、確認・改善したい点を書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 対応内容
+      description: 最小の改善案や検証内容を書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: 完了条件
+      description: 秘密情報を含めず、観測可能な完了条件を書いてください。
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: 補足
+      description: 公開して問題ない関連Issueや参考資料のみ記載してください。
+    validations:
+      required: false
