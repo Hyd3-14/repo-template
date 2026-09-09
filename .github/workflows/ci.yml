@@ -42,7 +42,6 @@ jobs:
             ".github/ISSUE_TEMPLATE/feature.yml"
             ".github/PULL_REQUEST_TEMPLATE/default.md"
             ".github/workflows/ci.yml"
-            ".github/workflows/dependency-review.yml"
             ".github/workflows/dependabot-triage.yml"
             ".github/workflows/automerge-dependabot.yml"
             ".github/workflows/github-actions-static-checks.yml"
