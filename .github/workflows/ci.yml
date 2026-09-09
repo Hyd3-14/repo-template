@@ -45,6 +45,7 @@ jobs:
             ".github/workflows/dependabot-triage.yml"
             ".github/workflows/automerge-dependabot.yml"
             ".github/workflows/github-actions-static-checks.yml"
+            ".github/workflows/sync-labels.yml"
             "docs/operations/manual-tasks.md"
             "docs/operations/repo-baseline.md"
             "scripts/sync-labels"
