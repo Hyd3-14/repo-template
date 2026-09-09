@@ -9,7 +9,7 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 - 日本語defaultのIssue FormsとPR template
 - `.github/labels.yml`のlabels baseline
 - `scripts/sync-labels`: GitHub labels を `labels.yml` に同期する helper
-- Dependabot、dependency review、GitHub Actions静的検証（actionlint、ShellCheck、zizmor、ghalint、pinact）、baseline CI
+- Dependabot、GitHub Actions静的検証（actionlint、ShellCheck、zizmor、ghalint、pinact）、baseline CI
 - ruleset exampleと初期設定docs
 
 ## 言語variant
@@ -33,7 +33,7 @@ rootの人間向けファイルは日本語をdefaultとします。英語で使
 - branchは`<type>/<issue-number>-<short-summary>`を標準とする。
 - GitHub Actionsの各jobは必要最小限の`permissions`と`timeout-minutes`を明示し、外部Actionはfull 40-character commit SHA、checkoutは`persist-credentials: false`とする。GitHub contextをshellへ渡す場合はstep-level `env:`を介する。
 - `.github/workflows/github-actions-static-checks.yml`で`actionlint`（ShellCheck連携）、`zizmor`、`ghalint`、`pinact`を検証する。
-- Dependabotは`github-actions`、`npm`、`docker`をweeklyで更新し、minor/patchをgroupingする。majorは人間レビューとし、minor/patchも`Dependabot auto-merge eligibility`、`Baseline static checks`、`Dependency Review`、`GitHub Actions Static Checks`が成功した場合だけ自動マージする。PRをdraftにすると手動保留として扱う。
+- Dependabotは`github-actions`、`npm`、`docker`をweeklyで更新し、minor/patchをgroupingする。majorは人間レビューとし、minor/patchも`Dependabot auto-merge eligibility`、`Baseline static checks`、`GitHub Actions Static Checks`が成功した場合だけ自動マージする。PRをdraftにすると手動保留として扱う。
 
 ## Labels
 
@@ -56,3 +56,5 @@ scripts/sync-labels --repo OWNER/REPO --apply --rename 'OLD LABEL=NEW LABEL' --p
 ## GitHub側の手動設定
 
 このrepositoryのファイルだけではbranch protection、ruleset、secrets、Dependabot alerts、private vulnerability reportingは完了しません。初期導入時は`docs/operations/manual-tasks.md`を確認してください。
+
+> 共通baseは、追加のGitHub Code Security / Advanced Security機能を契約していない個人private repositoryでも動作する構成を基準とします。Dependency Reviewなど利用条件のある機能は、生成先repoで利用可能性を確認して追加してください。
