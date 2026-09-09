@@ -45,7 +45,7 @@
             "integration_id": 15368
           },
           {
-            "context": "Dependency Review",
+            "context": "GitHub Actions Static Checks",
             "integration_id": 15368
           }
         ]
