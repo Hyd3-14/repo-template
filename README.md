@@ -43,7 +43,9 @@ scripts/sync-labels --repo OWNER/REPO --dry-run --rename 'OLD LABEL=NEW LABEL' -
 scripts/sync-labels --repo OWNER/REPO --apply --rename 'OLD LABEL=NEW LABEL' --prune
 ```
 
-main上の`.github/labels.yml`、`scripts/sync-labels`、`Sync Labels` workflowを変更すると、create/updateをGitHub labelsへ自動適用します。初回や任意の再同期はActionsから`workflow_dispatch`で実行できます。\n\n`--rename OLD=NEW`は、GitHub APIのlabel改称を使って既存Issue/PRへの付与を保ったまま移行する明示的なmappingです。`--prune`を付けたdry-runで`DELETE`候補を確認し、不要なlabelを削除できると判断した場合だけ`--apply --prune`を実行してください。
+main上の`.github/labels.yml`、`scripts/sync-labels`、`Sync Labels` workflowを変更すると、create/updateをGitHub labelsへ自動適用します。初回や任意の再同期はActionsから`workflow_dispatch`で実行できます。
+
+`--rename OLD=NEW`は、GitHub APIのlabel改称を使って既存Issue/PRへの付与を保ったまま移行する明示的なmappingです。`--prune`を付けたdry-runで`DELETE`候補を確認し、不要なlabelを削除できると判断した場合だけ`--apply --prune`を実行してください。
 
 ## Source of truth
 
