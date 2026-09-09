@@ -8,7 +8,7 @@ repository fileだけでは完了しないGitHub側の設定を記録します�
 - [ ] Dependabot alertsとsecurity updatesを有効にする。
 - [ ] 利用可能ならsecret scanningとprivate vulnerability reportingを有効にする。
 - [ ] GitHub Actionsのdefault token permissionをread-onlyにする。
-- [ ] `Baseline static checks`、`Dependency Review`、`GitHub Actions Static Checks`の実際のcheck名を確認する。
+- [ ] `Baseline static checks`、`GitHub Actions Static Checks`の実際のcheck名を確認する。
 - [ ] default branchのrulesetまたはbranch protectionへ必要なcheckを設定する。
 - [ ] `GitHub Actions Static Checks`が`actionlint`成功後に`zizmor`、`ghalint`、`pinact`を実行し、4結果を集約していることを確認する。
 - [ ] Dependabotの`Dependabot auto-merge eligibility` checkが`pull_request_target`側でminor/patchだけ成功し、`workflow_run`側でその最新結果を再確認していることを確認する。
@@ -46,4 +46,9 @@ scripts/sync-labels --repo OWNER/REPO --apply --rename 'OLD LABEL=NEW LABEL' --p
 - [ ] repo固有のlint、test、build、release手順を追加する。
 - [ ] secrets、variables、environments、GitHub Appを必要な範囲だけ設定する。
 - [ ] `./scripts/validate-template`相当の検証、またはdotfilesの`repo-preflight --agent`を実行する。
-- [ ] Dependabotのminor/patch auto-mergeが3つのrequired check、非draft、同一repository PRの条件を満たす場合だけ有効になることを確認する。major updateとdraft PRは手動レビューへ残す。
+- [ ] Dependabotのminor/patch auto-mergeが2つのrequired check、非draft、同一repository PRの条件を満たす場合だけ有効になることを確認する。major updateとdraft PRは手動レビューへ残す。
+
+
+## Optional security checks
+
+Dependency Reviewは共通baseの必須workflowには含めません。public repository、またはprivate repositoryでGitHub Code Security / GitHub Advanced Security等の利用条件を満たす場合だけ、生成先repoで追加しrequired check化してください。
