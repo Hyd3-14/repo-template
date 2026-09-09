@@ -31,7 +31,7 @@ expected_labels = {
     "status: in-progress",
     "status: blocked",
 }
-expected_forms = {"bug.yml", "feature.yml", "chore.yml"}
+expected_forms = {"bug.yml", "feature.yml", "chore.yml", "documentation.yml", "test.yml", "security.yml"}
 expected_heading_sets = {
     "ja": [
         "## 関連Issue",
