@@ -18,7 +18,7 @@
 - `type:`はIssueの種別、`priority:`は対応優先度、`area:`は主な対象領域、`status:`は現在のライフサイクル状態を表す。
 - 原則として`type:`は1つ、`priority:`は必要なIssueだけ、`area:`は主対象を1つ付与する。横断Issueでは`area:`を複数付与してよい。`status:`は必要なIssueに最大1つ付与し、状態遷移時は付け替える。
 - Dependabotは`github-actions`、`npm`、`docker`をweeklyで更新し、minor/patchをgroupingする。更新には7日間のcooldownを設け、majorは人間レビューとする。
-- Dependabotのminor/patch更新は、`Dependabot auto-merge eligibility`と、`Baseline static checks`、`Dependency Review`、`GitHub Actions Static Checks`が成功し、非draftの同一repository PRである場合だけ自動マージ対象とする。PRのdraft状態は手動保留の手段として維持する。
+- Dependabotのminor/patch更新は、`Dependabot auto-merge eligibility`と、`Baseline static checks`、`GitHub Actions Static Checks`が成功し、非draftの同一repository PRである場合だけ自動マージ対象とする。PRのdraft状態は手動保留の手段として維持する。
 
 ## GitHub Actions baseline
 
@@ -63,7 +63,6 @@ Dependabotのmetadata取得・label付与とrequired check後のauto-mergeには
 - `.github/PULL_REQUEST_TEMPLATE/default.md`（canonical）
 - `.github/pull_request_template.md`（GitHub自動読み込み用。canonicalと同一内容）
 - `.github/workflows/ci.yml`
-- `.github/workflows/dependency-review.yml`
 - `.github/workflows/dependabot-triage.yml`
 - `.github/workflows/automerge-dependabot.yml`
 - `.github/workflows/github-actions-static-checks.yml`
@@ -86,4 +85,4 @@ dotfiles側の`repo-preflight --agent`とcross-repo drift検査は、生成先re
 
 ## GitHub側で残る設定
 
-branch protectionまたはruleset、required checks、Dependabot alerts、secret scanning、private vulnerability reporting、secrets、GitHub App権限はファイルから自動適用しません。`manual-tasks.md`に確認項目を残します。
+branch protectionまたはruleset、required checks、Dependabot alerts、secret scanning、private vulnerability reporting、secrets、GitHub App権限はファイルから自動適用しません。共通baseは追加のGitHub Code Security / Advanced Security機能を要求せず、Dependency Reviewなど利用条件のあるcheckは生成先repoでoptionalに追加します。`manual-tasks.md`に確認項目を残します。

@@ -25,5 +25,5 @@ Private vulnerability reportingが未設定の場合は、maintainerが指定す
 
 - GitHub Actionsのtoken permissionはjob単位で最小化する。
 - third-party actionは固定versionを使い、floating refを避ける。
-- Dependabot alerts、dependency review、secret scanningを有効にする。
+- Dependabot alertsを有効にし、利用可能ならsecret scanningやDependency Reviewなどの追加security機能を有効にする。
 - secrets、tokens、credentials、session、履歴、logs、cacheをcommitしない。
