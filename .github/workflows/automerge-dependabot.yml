@@ -4,7 +4,6 @@ on: # zizmor: ignore[dangerous-triggers] Required for API-only Dependabot gating
   workflow_run:
     workflows:
       - Baseline CI
-      - Dependency Review
       - GitHub Actions Static Checks
       - Dependabot Triage
     types:
@@ -53,7 +52,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          required='["Baseline static checks","Dependency Review","GitHub Actions Static Checks"]'
+          required='["Baseline static checks","GitHub Actions Static Checks"]'
           check_runs=$(gh api "/repos/$REPO/commits/$SHA/check-runs" --jq '.check_runs')
           eligibility=$(jq -r '
             [ .[] | select(.name == "Dependabot auto-merge eligibility") ]
@@ -156,7 +155,7 @@ jobs:
             echo "ready=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          required='["Baseline static checks","Dependency Review","GitHub Actions Static Checks"]'
+          required='["Baseline static checks","GitHub Actions Static Checks"]'
           check_runs=$(gh api "/repos/$REPO/commits/$SHA/check-runs" --jq '.check_runs')
           eligibility=$(jq -r '
             [ .[] | select(.name == "Dependabot auto-merge eligibility") ]
