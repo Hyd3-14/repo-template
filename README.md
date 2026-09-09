@@ -12,10 +12,6 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 - Dependabot、GitHub Actions静的検証（actionlint、ShellCheck、zizmor、ghalint、pinact）、baseline CI
 - ruleset exampleと初期設定docs
 
-## 言語variant
-
-rootの人間向けファイルは日本語をdefaultとします。英語で使う場合は`variants/en/`のREADME、AGENTS、Issue Forms、PR template、SECURITYを生成先repoへコピーしてください。workflow、Dependabot、labelsのvalidationなどmachine-readableな共通設定はrootだけで管理します。
-
 ## Use this template
 
 1. GitHubの`Use this template`から新規repoを作成する。
@@ -28,7 +24,7 @@ rootの人間向けファイルは日本語をdefaultとします。英語で使
 
 - Issue titleには種別prefixを付けず、種別はlabelsで表す。
 - PR titleは原則Conventional Commits形式とし、squash merge時の履歴へそのまま利用できるようにする。
-- Issue Formは`.github/ISSUE_TEMPLATE/bug.yml`、`feature.yml`、`chore.yml`を使う。
+- Issue Formは`feature`、`bug`、`chore`、`documentation`、`test`、`security`の6 typeに対応する。
 - PR templateのcanonicalは`.github/PULL_REQUEST_TEMPLATE/default.md`とする。GitHubの通常のPR作成画面でも読み込めるよう、同内容の`.github/pull_request_template.md`をcompatibility aliasとして置く。
 - branchは`<type>/<issue-number>-<short-summary>`を標準とする。
 - GitHub Actionsの各jobは必要最小限の`permissions`と`timeout-minutes`を明示し、外部Actionはfull 40-character commit SHA、checkoutは`persist-credentials: false`とする。GitHub contextをshellへ渡す場合はstep-level `env:`を介する。
@@ -46,6 +42,8 @@ scripts/sync-labels --repo OWNER/REPO --dry-run
 scripts/sync-labels --repo OWNER/REPO --dry-run --rename 'OLD LABEL=NEW LABEL' --prune
 scripts/sync-labels --repo OWNER/REPO --apply --rename 'OLD LABEL=NEW LABEL' --prune
 ```
+
+main上の`.github/labels.yml`、`scripts/sync-labels`、`Sync Labels` workflowを変更すると、create/updateをGitHub labelsへ自動適用します。初回や任意の再同期はActionsから`workflow_dispatch`で実行できます。
 
 `--rename OLD=NEW`は、GitHub APIのlabel改称を使って既存Issue/PRへの付与を保ったまま移行する明示的なmappingです。`--prune`を付けたdry-runで`DELETE`候補を確認し、不要なlabelを削除できると判断した場合だけ`--apply --prune`を実行してください。
 
