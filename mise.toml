@@ -1,0 +1,34 @@
+# 開発toolとtaskの入口。task名の規則はdocs/operations/repo-baseline.mdの「mise task」を参照する。
+# 具体versionはmise.lockで固定する。
+
+[settings]
+# mise upgradeとmise lockで、公開から7日未満のreleaseを選ばない。Dependabotのcooldownと揃える。
+minimum_release_age = "7d"
+
+[tools]
+actionlint = "1.7.12"
+gitleaks = "8.30.1"
+shellcheck = "0.11.0"
+
+[tasks.validate]
+description = "baselineのhard gateをすべて実行する（CIと同じ入口）"
+depends = ["baseline:check", "lint", "secrets:scan"]
+
+[tasks."baseline:check"]
+description = "必須file、空白、secretらしいfile名、workflowのpermissions、template契約を検査する"
+run = "./scripts/check-baseline"
+
+[tasks.lint]
+description = "GitHub Actions workflowとshell scriptを静的検査する"
+run = [
+  "actionlint",
+  "shellcheck scripts/check-baseline scripts/validate-template",
+]
+
+[tasks."secrets:scan"]
+description = "commit履歴、未stageとstage済みの変更に含まれるsecretをgitleaksで検出する（未追跡fileは対象外）"
+run = [
+  "gitleaks git --redact --no-banner .",
+  "gitleaks git --pre-commit --redact --no-banner .",
+  "gitleaks git --pre-commit --staged --redact --no-banner .",
+]
