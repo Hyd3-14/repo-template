@@ -125,6 +125,8 @@ is:pr is:open -label:"review: routine" -label:"review: human" -label:"review: de
 
 - `README.md`
 - `AGENTS.md`
+- `CLAUDE.md`（`@AGENTS.md`だけを書く）
+- `mise.toml`、`mise.lock`
 - `SECURITY.md`
 - `.editorconfig`
 - `.gitattributes`
@@ -143,22 +145,41 @@ is:pr is:open -label:"review: routine" -label:"review: human" -label:"review: de
 - `scripts/ci-changes`
 - `scripts/docs-toc`
 - `scripts/docs-toc-targets.json`
+- `scripts/check-baseline`
 
 ## 検証
 
 ```sh
-./scripts/validate-template
-python3 -m unittest discover -s scripts/tests
-./scripts/docs-toc --check
-git diff --check
-actionlint
-shellcheck scripts/validate-template
+mise install
+mise run validate
 ghalint run
 zizmor --collect=all .
 pinact run --check --verify-comment
 ```
 
-`pinact`はversion annotationの検証時にGitHub APIを使うため、必要に応じてstep-levelの`GITHUB_TOKEN`またはローカルの認証済み環境を用意します。生成先repoでは、上記CLIを利用可能なversion固定済みの開発環境へ組み込んでください。
+`pinact`はversion annotationの検証時にGitHub APIを使うため、必要に応じてstep-levelの`GITHUB_TOKEN`またはローカルの認証済み環境を用意します。`mise run validate`はBaseline CIと同じ入口で、必須file、空白、secretらしいfile名、workflowのpermissions、template契約、actionlint、ShellCheck、gitleaksを実行します。ghalint、zizmor、pinactは`GitHub Actions Static Checks` workflowで実行します。
+
+## mise task
+
+開発toolは`mise.toml`でversionを指定し、`mise.lock`でchecksumまで固定します。toolを追加・更新したら`mise lock`を実行し、`mise.lock`も一緒にcommitします。`minimum_release_age`により、公開から7日未満のreleaseは選びません。
+
+task名は全repositoryで次の意味に揃えます。中身はrepositoryごとに違ってよいですが、同じ意味の作業には同じ名前を使います。
+
+| task | 意味 | baseの状態 |
+| --- | --- | --- |
+| `validate` | mergeの前提になるhard gateをすべて実行する。Baseline CIはこのtaskだけを呼ぶ | 定義済み |
+| `lint` | 変更しない静的検査 | 定義済み（actionlint、ShellCheck） |
+| `fmt` | formatterで書き換える | 未定義。formatterを入れるrepositoryで追加する |
+| `test` | 自動テストを実行する | 未定義。テストを持つrepositoryで追加する |
+| `<対象>:check`、`<対象>:scan` | 特定の対象の検査 | `baseline:check`、`secrets:scan`を定義済み |
+
+repository固有の検査を足すときは、taskを追加して`validate`の`depends`へ加えます。CIへ直接stepを足さず、ローカルとCIで同じ検査が走る状態を保ちます。
+
+## secret content scan
+
+`secrets:scan`はgitleaksで、commit履歴、未stageの変更、stage済みの変更を検査します。未追跡のfileは検査しないため、commit前に`git add`してから`mise run validate`を実行すると確実です。CLIとして動かすため、GitHubのsecret scanningやgitleaks-actionのlicenseは不要です。
+
+誤検知は、secretを削除・rotateできないことを確認したうえで、理由を書いて`.gitleaksignore`へfingerprintを追加します。
 
 dotfiles側の`repo-preflight --agent`とcross-repo drift検査は、生成先repoへ必要な場合だけ適用します。
 

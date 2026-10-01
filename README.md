@@ -4,13 +4,15 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 
 ## 含まれるもの
 
-- 軽量な`AGENTS.md`
+- 軽量な`AGENTS.md`と、それを読み込むClaude Code向けの`CLAUDE.md`
+- `mise.toml`と`mise.lock`: 開発toolのversion固定と、`mise run validate`などのtask入口
 - `.editorconfig`、`.gitattributes`、`.gitignore`
 - 日本語defaultのIssue FormsとPR template
 - `.github/labels.yml`のlabels baseline
 - `scripts/sync-labels`: GitHub labels を `labels.yml` に同期する helper
 - `scripts/docs-toc`: 長いMarkdownの目次を見出しから生成し、CIで更新漏れを検査する helper
 - `scripts/ci-changes`: 文書だけのPRで重い検証jobを省略してよいかを、fail-closedで判定する helper
+- gitleaksによるsecret content scan（`mise run validate`とBaseline CIで実行）
 - Dependabot、GitHub Actions静的検証（actionlint、ShellCheck、zizmor、ghalint、pinact）、baseline CI
 - ruleset exampleと初期設定docs
 
@@ -19,7 +21,7 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 1. GitHubの`Use this template`から新規repoを作成する。
 2. READMEと`docs/operations/repo-baseline.md`を生成先repo向けに更新する。
 3. repo固有のbuild、test、release手順を追加する。
-4. `./scripts/validate-template`、`python3 -m unittest discover -s scripts/tests`、`./scripts/docs-toc --check`、`git diff --check`を実行する。
+4. `mise install`でtoolを揃え、`mise run validate`を実行する。
 5. `docs/operations/manual-tasks.md`を確認し、GitHub側の設定を行う。
 
 ## GitHub運用

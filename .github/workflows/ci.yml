@@ -50,53 +50,12 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Check repository baseline files
-        shell: bash
-        run: |
-          set -euo pipefail
-          required_files=(
-            "AGENTS.md"
-            "README.md"
-            "SECURITY.md"
-            ".editorconfig"
-            ".gitattributes"
-            ".gitignore"
-            ".github/dependabot.yml"
-            ".github/hyd3-baseline.yml"
-            ".github/labels.yml"
-            ".github/ISSUE_TEMPLATE/bug.yml"
-            ".github/ISSUE_TEMPLATE/chore.yml"
-            ".github/ISSUE_TEMPLATE/feature.yml"
-            ".github/ISSUE_TEMPLATE/documentation.yml"
-            ".github/ISSUE_TEMPLATE/test.yml"
-            ".github/ISSUE_TEMPLATE/security.yml"
-            ".github/PULL_REQUEST_TEMPLATE/default.md"
-            ".github/workflows/ci.yml"
-            ".github/workflows/dependabot-triage.yml"
-            ".github/workflows/automerge-dependabot.yml"
-            ".github/workflows/github-actions-static-checks.yml"
-            ".github/workflows/sync-labels.yml"
-            "docs/operations/manual-tasks.md"
-            "docs/operations/repo-baseline.md"
-            "scripts/ci-changes"
-            "scripts/docs-toc"
-            "scripts/docs-toc-targets.json"
-            "scripts/sync-labels"
-            "scripts/validate-template"
-          )
-
-          missing=0
-          for file in "${required_files[@]}"; do
-            if [ ! -f "$file" ]; then
-              echo "::error file=$file::Required baseline file is missing"
-              missing=1
-            fi
-          done
-          if [ "$missing" -ne 0 ]; then
-            exit "$missing"
-          fi
-
-          ./scripts/validate-template
+      - name: Install mise tools
+        uses: jdx/mise-action@7a4e45a543138629540c9a1616d08632b893e492 # v5.0.1
+        with:
+          version: 2026.9.6
+          install: true
+          cache: true
 
       - name: Run script tests
         shell: bash
@@ -106,50 +65,9 @@ jobs:
         shell: bash
         run: ./scripts/docs-toc --check
 
-      - name: Check committed whitespace
-        if: github.event_name == 'pull_request'
+      - name: Run baseline validation
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         shell: bash
-        run: git diff --check "$BASE_SHA" "$HEAD_SHA"
-
-      - name: Check working tree whitespace
-        if: github.event_name != 'pull_request'
-        shell: bash
-        run: git diff --check
-
-      - name: Check for obvious secret filenames
-        shell: bash
-        run: |
-          set -euo pipefail
-          forbidden='(^|/)(auth|oauth|token|credential|credentials|secret|secrets|session|sessions|hosts)\.(json|ya?ml|toml|ini|env|txt)$|(^|/)\.env($|\.)'
-          matches=$(find . -path ./.git -prune -o -type f -print |
-            sed 's#^\./##' |
-            grep -Ei "$forbidden" |
-            grep -Eiv '(^|/)\.env\.example$' || true)
-          if [ -n "$matches" ]; then
-            echo "$matches"
-            echo "::error::Potential secret or local state file names found"
-            exit 1
-          fi
-
-      - name: Check workflow permissions are explicit
-        shell: bash
-        run: |
-          set -euo pipefail
-          missing=$(find .github/workflows -type f \( -name '*.yml' -o -name '*.yaml' \) -exec awk '
-            FNR == 1 {
-              if (seen && !has) print file
-              file = FILENAME
-              has = 0
-              seen = 1
-            }
-            /^permissions:/ { has = 1 }
-            END { if (seen && !has) print file }
-          ' {} +)
-          if [ -n "$missing" ]; then
-            echo "$missing"
-            echo "::error::Workflow files must declare permissions explicitly"
-            exit 1
-          fi
+        run: mise run validate
