@@ -22,7 +22,7 @@
 ## 責務
 
 - `repo-template`: README、軽量AGENTS、Issue Forms、PR template、labels、CI、Dependabotなど共通baseの正本。
-- `my-toolbox`: `app`、`tooling`、`security`、`dotfiles-public-safe`などproject type固有overlayの正本。
+- `repo-template/overlays/`: `app`、`tooling`、`security`、`dotfiles-public-safe`などproject type固有overlayの正本。生成先へはbaseとしてコピーせず、profileで選んだものだけを重ねる（[`overlays/README.md`](../../overlays/README.md)）。
 - `dotfiles`: repo-preflight、repo-bootstrap、branch検査、publish workflow、drift検査など運用仕様と実行ロジックの正本。
 
 ## 共通仕様

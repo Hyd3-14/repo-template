@@ -1,0 +1,55 @@
+version: 3
+
+source_of_truth:
+  common_base: Hyd3-14/repo-template
+  profile_overlays: Hyd3-14/repo-template/overlays
+  policy_and_validation: Hyd3-14/dotfiles
+
+base:
+  repository: Hyd3-14/repo-template
+  local_path_env: REPO_BOOTSTRAP_REPO_TEMPLATE
+  path: .
+  exclude:
+    - overlays
+
+profiles:
+  base:
+    base: repo-template
+    overlays: []
+  app:
+    base: repo-template
+    overlays:
+      - app
+      - security
+  tooling:
+    base: repo-template
+    overlays:
+      - tooling
+      - security
+  docs:
+    base: repo-template
+    overlays: []
+  dotfiles:
+    base: none
+    overlays:
+      - dotfiles-public-safe
+  archive:
+    base: none
+    overlays: []
+  competitive:
+    base: none
+    overlays: []
+
+overlays:
+  security:
+    path: overlays/security
+    description: 既存baselineへsecret scan等を追加するoverlay
+  app:
+    path: overlays/app
+    description: app固有のdocs、release、composite actionを追加するoverlay
+  tooling:
+    path: overlays/tooling
+    description: tooling固有のdocs、examples、releaseを追加するoverlay
+  dotfiles-public-safe:
+    path: overlays/dotfiles-public-safe
+    description: 公開可能なdotfiles向けの単独overlay

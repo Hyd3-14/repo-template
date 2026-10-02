@@ -1,0 +1,3 @@
+title = "repository gitleaks config"
+
+# 誤検知の allowlist は、必要になった時だけ理由付きで追加する。

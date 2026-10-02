@@ -1,0 +1,42 @@
+name: Setup Node and pnpm
+description: Set up Node.js from .node-version and install dependencies with pnpm.
+
+inputs:
+  install:
+    description: Whether to run pnpm install --frozen-lockfile
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      with:
+        node-version-file: '.node-version'
+        cache: 'pnpm'
+
+    - name: Resolve pnpm version
+      id: resolve_pnpm_version
+      shell: bash
+      run: |
+        set -euo pipefail
+        pnpm_version="$(node -p "const packageManager = require('./package.json').packageManager ?? ''; const match = String(packageManager).match(/^pnpm@([^+]+)/); if (!match) { throw new Error('package.json packageManager must start with pnpm@'); } match[1];")"
+        echo "pnpm_version=$pnpm_version" >> "$GITHUB_OUTPUT"
+
+    - name: Enable pnpm via corepack
+      shell: bash
+      env:
+        PNPM_VERSION: ${{ steps.resolve_pnpm_version.outputs.pnpm_version }}
+      run: |
+        set -euo pipefail
+        corepack enable
+        corepack prepare "pnpm@${PNPM_VERSION}" --activate
+        pnpm --version
+
+    - name: Install dependencies
+      if: inputs.install == 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+        pnpm install --frozen-lockfile

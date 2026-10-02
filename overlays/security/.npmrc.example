@@ -1,0 +1,3 @@
+# Takumi Guard 経由で public npm packages を取得する例。
+# private registry を使う場合は、scope ごとに別 registry を明示する。
+registry=https://npm.flatt.tech/

@@ -1,0 +1,15 @@
+.DS_Store
+Thumbs.db
+
+.zsecret
+zsh/env.local.zsh
+
+config/gh/hosts.yml
+config/**/credentials.json
+config/**/session.json
+
+git/.gitconfig.local
+git/.gitconfig.local.*
+!git/.gitconfig.local.example
+
+*.local
