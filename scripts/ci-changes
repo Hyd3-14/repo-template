@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+"""PRの変更pathから、重い検証jobを省略できるかを判定する。
+
+省略してよいと確認したpathだけを許可し、未知のpath、PR以外のevent、
+差分取得の失敗では必ず `run_heavy=true` を出力する（fail-closed）。
+生成先repoでは、重いjobに `needs: changes` と
+`if: needs.changes.outputs.run_heavy == 'true'` を付けて使う。
+"""
+
+from __future__ import annotations
+
+import os
+import re
+import subprocess
+import sys
+from pathlib import PurePosixPath
+
+# 検証結果に影響しないと確認したpathだけを置く。生成先repoの検証内容に合わせて見直す。
+SKIPPABLE_FILES = frozenset(
+    {
+        "README.md",
+        "AGENTS.md",
+        "CLAUDE.md",
+        "CONTRIBUTING.md",
+        "CHANGELOG.md",
+        "SECURITY.md",
+        "LICENSE",
+        ".github/labels.yml",
+        ".github/pull_request_template.md",
+    }
+)
+SHA = re.compile(r"[0-9a-f]{40}")
+
+
+def can_skip(path: str) -> bool:
+    pure = PurePosixPath(path)
+    parent = str(pure.parent)
+    return (
+        path in SKIPPABLE_FILES
+        or (path.startswith("docs/") and pure.suffix == ".md")
+        or (parent == ".github/PULL_REQUEST_TEMPLATE" and pure.suffix == ".md")
+        or (parent == ".github/ISSUE_TEMPLATE" and pure.suffix in {".md", ".yml", ".yaml"})
+    )
+
+
+def changed_paths(base: str, head: str) -> list[str] | None:
+    # renameを削除と追加に分けて元pathも検査し、NUL区切りで任意のファイル名を扱う。
+    completed = subprocess.run(
+        ["git", "diff", "--no-renames", "--name-only", "-z", f"{base}...{head}", "--"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if completed.returncode != 0:
+        return None
+    try:
+        output = completed.stdout.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+    if not output.endswith("\0"):
+        return None
+    return output[:-1].split("\0")
+
+
+def assess(env: dict[str, str]) -> tuple[bool, str]:
+    if env.get("CI_EVENT_NAME") != "pull_request":
+        return True, "PR以外のevent"
+    base = env.get("CI_BASE_SHA", "")
+    head = env.get("CI_HEAD_SHA", "")
+    if not (SHA.fullmatch(base) and SHA.fullmatch(head)):
+        return True, "比較対象のSHAが不足または不正"
+    paths = changed_paths(base, head)
+    if not paths:
+        return True, "変更pathが空、または差分の取得・解析に失敗"
+    if all(path and can_skip(path) for path in paths):
+        return False, f"省略対象の文書・GitHub運用設定だけの変更（{len(paths)} path）"
+    return True, "省略対象以外のpathを含む変更"
+
+
+def main() -> int:
+    run_heavy, reason = assess(dict(os.environ))
+    value = "true" if run_heavy else "false"
+    summary = "\n".join(
+        [
+            "### 重い検証jobの実行判定",
+            "",
+            f"- run_heavy: {value}",
+            f"- 理由: {reason}",
+            "",
+        ]
+    )
+    print(summary)
+    for key, text in (("GITHUB_OUTPUT", f"run_heavy={value}\n"), ("GITHUB_STEP_SUMMARY", summary)):
+        if os.environ.get(key):
+            with open(os.environ[key], "a", encoding="utf-8") as handle:
+                handle.write(text)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

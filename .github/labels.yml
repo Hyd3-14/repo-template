@@ -73,3 +73,15 @@
 - name: "status: blocked"
   color: "D73A4A"
   description: "外部要因、依存関係、権限等により進行不能"
+
+- name: "review: routine"
+  color: "C2E0C6"
+  description: "通常のCI・レビュー手順で進められ、個別の人間判断を必須としない"
+
+- name: "review: human"
+  color: "F29513"
+  description: "merge前に人間による内容確認が必要"
+
+- name: "review: decision"
+  color: "B60205"
+  description: "人間の意思決定が確定するまでmergeしない"
