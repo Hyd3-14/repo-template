@@ -1,0 +1,19 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "mise.tomlとmise.lockで固定したtoolだけを更新する。GitHub ActionsなどほかのecosystemはDependabotが扱う。",
+  "extends": ["config:recommended", "schedule:weekly"],
+  "enabledManagers": ["mise"],
+  "timezone": "Asia/Tokyo",
+  "minimumReleaseAge": "7 days",
+  "dependencyDashboard": false,
+  "semanticCommits": "enabled",
+  "semanticCommitType": "chore",
+  "labels": ["type: chore", "area: dependency"],
+  "packageRules": [
+    {
+      "description": "mise管理toolの更新を1つのPRへまとめる",
+      "matchManagers": ["mise"],
+      "groupName": "mise tools"
+    }
+  ]
+}

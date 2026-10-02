@@ -6,6 +6,7 @@ repository fileだけでは完了しないGitHub側の設定を記録します�
 
 - [ ] default branchが`main`であることを確認する。
 - [ ] Dependabot alertsとsecurity updatesを有効にする。
+- [ ] Renovate GitHub Appがこのrepositoryで有効になっていることを確認する。account単位で「All repositories」に導入していれば追加作業は不要。
 - [ ] 利用可能ならsecret scanningとprivate vulnerability reportingを有効にする。
 - [ ] GitHub Actionsのdefault token permissionをread-onlyにする。
 - [ ] `Baseline static checks`、`GitHub Actions Static Checks`の実際のcheck名を確認する。

@@ -127,6 +127,7 @@ is:pr is:open -label:"review: routine" -label:"review: human" -label:"review: de
 - `AGENTS.md`
 - `CLAUDE.md`（`@AGENTS.md`だけを書く）
 - `mise.toml`、`mise.lock`
+- `renovate.json`
 - `SECURITY.md`
 - `.editorconfig`
 - `.gitattributes`
@@ -162,6 +163,8 @@ pinact run --check --verify-comment
 ## mise task
 
 開発toolは`mise.toml`でversionを指定し、`mise.lock`でchecksumまで固定します。toolを追加・更新したら`mise lock`を実行し、`mise.lock`も一緒にcommitします。`minimum_release_age`により、公開から7日未満のreleaseは選びません。
+
+Dependabotは`mise.toml`に対応していないため、mise管理toolの更新PRはRenovateが作ります。`renovate.json`はmise managerだけを有効にし、GitHub ActionsなどのecosystemはDependabotに任せます。Renovate GitHub Appが生成先repositoryで有効になっている必要があります（manual tasksを参照）。
 
 task名は全repositoryで次の意味に揃えます。中身はrepositoryごとに違ってよいですが、同じ意味の作業には同じ名前を使います。
 

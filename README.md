@@ -13,6 +13,7 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 - `scripts/docs-toc`: 長いMarkdownの目次を見出しから生成し、CIで更新漏れを検査する helper
 - `scripts/ci-changes`: 文書だけのPRで重い検証jobを省略してよいかを、fail-closedで判定する helper
 - gitleaksによるsecret content scan（`mise run validate`とBaseline CIで実行）
+- Renovate: mise管理toolだけを週次で更新する（ほかのecosystemはDependabot）
 - Dependabot、GitHub Actions静的検証（actionlint、ShellCheck、zizmor、ghalint、pinact）、baseline CI
 - ruleset exampleと初期設定docs
 

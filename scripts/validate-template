@@ -7,6 +7,7 @@ cd "$repo_root"
 python3 - <<'PY'
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -55,6 +56,7 @@ required = [
     Path("SECURITY.md"),
     Path("mise.toml"),
     Path("mise.lock"),
+    Path("renovate.json"),
     Path("scripts/check-baseline"),
     Path(".editorconfig"),
     Path(".gitattributes"),
@@ -86,6 +88,10 @@ for tool in ["actionlint", "gitleaks", "shellcheck"]:
 for task in ["validate", '"baseline:check"', "lint", '"secrets:scan"']:
     if f"[tasks.{task}]" not in mise_config:
         fail(f"mise.tomlに{task} taskが必要です")
+
+renovate = json.loads(Path("renovate.json").read_text(encoding="utf-8"))
+if renovate.get("enabledManagers") != ["mise"]:
+    fail("renovate.jsonはmise managerだけを有効にする必要があります")
 
 ci = Path(".github/workflows/ci.yml").read_text(encoding="utf-8")
 if not re.search(r'^\s+run:\s*mise run validate\s*$', ci, flags=re.MULTILINE):
