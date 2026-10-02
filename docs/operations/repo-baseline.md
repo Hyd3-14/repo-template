@@ -15,6 +15,8 @@
 - [CIの省略判定](#ci%E3%81%AE%E7%9C%81%E7%95%A5%E5%88%A4%E5%AE%9A)
 - [Required files](#required-files)
 - [検証](#%E6%A4%9C%E8%A8%BC)
+- [mise task](#mise-task)
+- [secret content scan](#secret-content-scan)
 - [GitHub側で残る設定](#github%E5%81%B4%E3%81%A7%E6%AE%8B%E3%82%8B%E8%A8%AD%E5%AE%9A)
 
 <!-- END docs-toc -->
@@ -158,7 +160,7 @@ zizmor --collect=all .
 pinact run --check --verify-comment
 ```
 
-`pinact`はversion annotationの検証時にGitHub APIを使うため、必要に応じてstep-levelの`GITHUB_TOKEN`またはローカルの認証済み環境を用意します。`mise run validate`はBaseline CIが呼ぶものと同じtaskで、必須file、空白、secretらしいfile名、workflowのpermissions、template契約、actionlint、ShellCheck、gitleaksを実行します。ghalint、zizmor、pinactは`GitHub Actions Static Checks` workflowで実行します。
+`pinact`はversion annotationの検証時にGitHub APIを使うため、必要に応じてstep-levelの`GITHUB_TOKEN`またはローカルの認証済み環境を用意します。`mise run validate`はBaseline CIが呼ぶものと同じtaskで、必須file、空白、secretらしいfile名、workflowのpermissions、template契約、文書の目次、`scripts/tests`のunit test、actionlint、ShellCheck、gitleaksを実行します。ghalint、zizmor、pinactは`GitHub Actions Static Checks` workflowで実行します。
 
 ## mise task
 
@@ -172,9 +174,9 @@ task名は全repositoryで次の意味に揃えます。中身はrepositoryご�
 | --- | --- | --- |
 | `validate` | mergeの前提になるhard gateをすべて実行する。Baseline CIはこのtaskだけを呼ぶ | 定義済み |
 | `lint` | 変更しない静的検査 | 定義済み（actionlint、ShellCheck） |
-| `fmt` | formatterで書き換える | 未定義。formatterを入れるrepositoryで追加する |
-| `test` | 自動テストを実行する | 未定義。テストを持つrepositoryで追加する |
-| `<対象>:check`、`<対象>:scan` | 特定の対象の検査 | `baseline:check`、`secrets:scan`を定義済み |
+| `fmt` | formatterなどでfileを書き換える | 定義済み（文書の目次を再生成） |
+| `test` | 自動テストを実行する | 定義済み（`scripts/tests`のunit test） |
+| `<対象>:check`、`<対象>:scan` | 特定の対象の検査 | `baseline:check`、`docs:check`、`secrets:scan`を定義済み |
 
 repository固有の検査を足すときは、taskを追加して`validate`の`depends`へ加えます。CIへ直接stepを足さず、ローカルとCIで同じ検査を実行できる状態を保ちます。
 

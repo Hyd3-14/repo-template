@@ -51,6 +51,9 @@ required_files=(
   "docs/operations/manual-tasks.md"
   "docs/operations/repo-baseline.md"
   "scripts/check-baseline"
+  "scripts/ci-changes"
+  "scripts/docs-toc"
+  "scripts/docs-toc-targets.json"
   "scripts/sync-labels"
   "scripts/validate-template"
 )

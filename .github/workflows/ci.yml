@@ -57,14 +57,6 @@ jobs:
           install: true
           cache: true
 
-      - name: Run script tests
-        shell: bash
-        run: python3 -m unittest discover -s scripts/tests
-
-      - name: Check generated docs TOC
-        shell: bash
-        run: ./scripts/docs-toc --check
-
       - name: Run baseline validation
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}

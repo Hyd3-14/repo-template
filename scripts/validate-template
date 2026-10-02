@@ -85,7 +85,7 @@ for tool in ["actionlint", "gitleaks", "shellcheck"]:
         fail(f"mise.tomlに{tool}のversion固定が必要です")
     if f"[[tools.{tool}]]" not in Path("mise.lock").read_text(encoding="utf-8"):
         fail(f"mise.lockに{tool}がありません。mise lockを実行してください")
-for task in ["validate", '"baseline:check"', "lint", '"secrets:scan"']:
+for task in ["validate", '"baseline:check"', '"docs:check"', "fmt", "lint", '"secrets:scan"', "test"]:
     if f"[tasks.{task}]" not in mise_config:
         fail(f"mise.tomlに{task} taskが必要です")
 
