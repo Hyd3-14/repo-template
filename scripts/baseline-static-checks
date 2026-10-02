@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 生成先repositoryのbaselineを検査する。`mise run validate`とBaseline CIの両方から呼ぶ。
+# 生成先repositoryのbaselineを検査する。`mise run validate` と Baseline CI の両方から呼ぶ。
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -33,7 +33,7 @@ required_files=(
   "mise.toml"
   "mise.lock"
   ".github/dependabot.yml"
-  ".github/hyd3-baseline.yml"
+  ".github/repo-baseline.yml"
   ".github/labels.yml"
   ".github/ISSUE_TEMPLATE/bug.yml"
   ".github/ISSUE_TEMPLATE/chore.yml"
@@ -49,7 +49,14 @@ required_files=(
   ".github/workflows/sync-labels.yml"
   "docs/operations/manual-tasks.md"
   "docs/operations/repo-baseline.md"
+  "scripts/apply-repo-settings"
+  "scripts/apply-rulesets"
+  "scripts/baseline-static-checks"
   "scripts/check-baseline"
+  "rulesets/default-branch.json"
+  "scripts/ci-changes"
+  "scripts/docs-toc"
+  "scripts/docs-toc-targets.json"
   "scripts/sync-labels"
   "scripts/validate-template"
 )

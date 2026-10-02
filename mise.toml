@@ -12,11 +12,23 @@ shellcheck = "0.11.0"
 
 [tasks.validate]
 description = "baselineのhard gateをすべて実行する（CIと同じ入口）"
-depends = ["baseline:check", "lint", "secrets:scan"]
+depends = ["baseline:check", "docs:check", "lint", "secrets:scan", "test"]
 
 [tasks."baseline:check"]
 description = "必須file、空白、secretらしいfile名、workflowのpermissions、template契約を検査する"
 run = "./scripts/check-baseline"
+
+[tasks.test]
+description = "scripts/のunit testを実行する"
+run = "python3 -m unittest discover -s scripts/tests"
+
+[tasks.fmt]
+description = "文書の目次を見出しから再生成する"
+run = "./scripts/docs-toc"
+
+[tasks."docs:check"]
+description = "文書の目次が見出しと一致しているかを検査する"
+run = "./scripts/docs-toc --check"
 
 [tasks.lint]
 description = "GitHub Actions workflowとshell scriptを静的検査する"
