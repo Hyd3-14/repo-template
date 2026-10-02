@@ -2,7 +2,7 @@
 
 `overlays/`は、project typeごとに共通baseへ重ねる追加物を管理します。repositoryのrootが共通baseで、ここに置いたdirectoryは、必要なrepositoryだけが明示的に取り込みます。
 
-`overlays/`自体は生成先へコピーしません。dotfilesの`repo-bootstrap`は、baseをコピーするときにこのdirectoryを除外し、profileで選んだoverlayだけをbaseの後に重ねます。profileとoverlayの対応は、機械可読な[`manifest.yml`](manifest.yml)を正本とします。
+`overlays/`自体は生成先へコピーしません。dotfilesの`repo-bootstrap`は、baseをコピーするときにこのdirectoryを除外し、profileで選んだoverlayだけをbaseの後に重ねます。profileとoverlayの対応は、機械可読な[`manifest.yml`](manifest.yml)で管理します。
 
 ## Overlay一覧
 
