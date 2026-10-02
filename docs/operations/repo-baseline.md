@@ -158,7 +158,7 @@ zizmor --collect=all .
 pinact run --check --verify-comment
 ```
 
-`pinact`はversion annotationの検証時にGitHub APIを使うため、必要に応じてstep-levelの`GITHUB_TOKEN`またはローカルの認証済み環境を用意します。`mise run validate`はBaseline CIと同じ入口で、必須file、空白、secretらしいfile名、workflowのpermissions、template契約、actionlint、ShellCheck、gitleaksを実行します。ghalint、zizmor、pinactは`GitHub Actions Static Checks` workflowで実行します。
+`pinact`はversion annotationの検証時にGitHub APIを使うため、必要に応じてstep-levelの`GITHUB_TOKEN`またはローカルの認証済み環境を用意します。`mise run validate`はBaseline CIが呼ぶものと同じtaskで、必須file、空白、secretらしいfile名、workflowのpermissions、template契約、actionlint、ShellCheck、gitleaksを実行します。ghalint、zizmor、pinactは`GitHub Actions Static Checks` workflowで実行します。
 
 ## mise task
 
@@ -176,7 +176,7 @@ task名は全repositoryで次の意味に揃えます。中身はrepositoryご�
 | `test` | 自動テストを実行する | 未定義。テストを持つrepositoryで追加する |
 | `<対象>:check`、`<対象>:scan` | 特定の対象の検査 | `baseline:check`、`secrets:scan`を定義済み |
 
-repository固有の検査を足すときは、taskを追加して`validate`の`depends`へ加えます。CIへ直接stepを足さず、ローカルとCIで同じ検査が走る状態を保ちます。
+repository固有の検査を足すときは、taskを追加して`validate`の`depends`へ加えます。CIへ直接stepを足さず、ローカルとCIで同じ検査を実行できる状態を保ちます。
 
 ## secret content scan
 

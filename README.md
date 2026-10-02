@@ -5,7 +5,7 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 ## 含まれるもの
 
 - 軽量な`AGENTS.md`と、それを読み込むClaude Code向けの`CLAUDE.md`
-- `mise.toml`と`mise.lock`: 開発toolのversion固定と、`mise run validate`などのtask入口
+- `mise.toml`と`mise.lock`: 開発toolのversion固定と、`mise run validate`などのtask定義
 - `.editorconfig`、`.gitattributes`、`.gitignore`
 - 日本語defaultのIssue FormsとPR template
 - `.github/labels.yml`のlabels baseline
