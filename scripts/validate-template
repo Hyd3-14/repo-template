@@ -7,6 +7,7 @@ cd "$repo_root"
 python3 - <<'PY'
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -51,7 +52,12 @@ def fail(message: str) -> None:
 required = [
     Path("README.md"),
     Path("AGENTS.md"),
+    Path("CLAUDE.md"),
     Path("SECURITY.md"),
+    Path("mise.toml"),
+    Path("mise.lock"),
+    Path("renovate.json"),
+    Path("scripts/check-baseline"),
     Path(".editorconfig"),
     Path(".gitattributes"),
     Path(".gitignore"),
@@ -69,6 +75,27 @@ required = [
 for path in required:
     if not path.is_file():
         fail(f"必須ファイルがありません: {path}")
+
+if "@AGENTS.md" not in Path("CLAUDE.md").read_text(encoding="utf-8").split():
+    fail("CLAUDE.mdは@AGENTS.mdを読み込む必要があります")
+
+mise_config = Path("mise.toml").read_text(encoding="utf-8")
+for tool in ["actionlint", "gitleaks", "shellcheck"]:
+    if not re.search(rf'^{re.escape(tool)}\s*=', mise_config, flags=re.MULTILINE):
+        fail(f"mise.tomlに{tool}のversion固定が必要です")
+    if f"[[tools.{tool}]]" not in Path("mise.lock").read_text(encoding="utf-8"):
+        fail(f"mise.lockに{tool}がありません。mise lockを実行してください")
+for task in ["validate", '"baseline:check"', '"docs:check"', "fmt", "lint", '"secrets:scan"', "test"]:
+    if f"[tasks.{task}]" not in mise_config:
+        fail(f"mise.tomlに{task} taskが必要です")
+
+renovate = json.loads(Path("renovate.json").read_text(encoding="utf-8"))
+if renovate.get("enabledManagers") != ["mise"]:
+    fail("renovate.jsonはmise managerだけを有効にする必要があります")
+
+ci = Path(".github/workflows/ci.yml").read_text(encoding="utf-8")
+if not re.search(r'^\s+run:\s*mise run validate\s*$', ci, flags=re.MULTILINE):
+    fail("Baseline CIはmise run validateを入口にする必要があります")
 
 forms_dir = Path(".github/ISSUE_TEMPLATE")
 actual_forms = {path.name for path in forms_dir.iterdir() if path.is_file() and path.name != "config.yml"}

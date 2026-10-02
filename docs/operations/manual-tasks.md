@@ -6,6 +6,7 @@ repository fileだけでは完了しないGitHub側の設定を記録します�
 
 - [ ] default branchが`main`であることを確認する。
 - [ ] Dependabot alertsとsecurity updatesを有効にする。
+- [ ] Renovate GitHub Appがこのrepositoryで有効になっていることを確認する。account単位で「All repositories」に導入していれば追加作業は不要。
 - [ ] 利用可能ならsecret scanningとprivate vulnerability reportingを有効にする。
 - [ ] GitHub Actionsのdefault token permissionをread-onlyにする。
 - [ ] `Baseline static checks`、`GitHub Actions Static Checks`の実際のcheck名を確認する。
@@ -45,7 +46,7 @@ scripts/sync-labels --repo OWNER/REPO --apply --rename 'OLD LABEL=NEW LABEL' --p
 - [ ] 不要なDependabot ecosystemを削除する。
 - [ ] repo固有のlint、test、build、release手順を追加する。
 - [ ] secrets、variables、environments、GitHub Appを必要な範囲だけ設定する。
-- [ ] `./scripts/validate-template`相当の検証、またはdotfilesの`repo-preflight --agent`を実行する。
+- [ ] `mise run validate`、または必要に応じてdotfilesの`repo-preflight --agent`を実行する。
 - [ ] Dependabotのminor/patch auto-mergeが2つのrequired check、非draft、同一repository PRの条件を満たす場合だけ有効になることを確認する。major updateとdraft PRは手動レビューへ残す。
 
 
