@@ -10,6 +10,33 @@ on:
 permissions: {}
 
 jobs:
+  # 重い検証jobを追加する場合は、`needs: changes`と
+  # `if: needs.changes.outputs.run_heavy == 'true'`で文書だけの変更時に省略する。
+  # 省略したjobはskippedとなり、required checkを満たす。判定基準はscripts/ci-changesを参照する。
+  changes:
+    name: Determine required checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      run_heavy: ${{ steps.changes.outputs.run_heavy }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Determine heavy checks
+        id: changes
+        env:
+          CI_EVENT_NAME: ${{ github.event_name }}
+          CI_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          CI_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: ./scripts/ci-changes
+
   static-checks:
     name: Baseline static checks
     runs-on: ubuntu-latest
@@ -51,6 +78,9 @@ jobs:
             ".github/workflows/sync-labels.yml"
             "docs/operations/manual-tasks.md"
             "docs/operations/repo-baseline.md"
+            "scripts/ci-changes"
+            "scripts/docs-toc"
+            "scripts/docs-toc-targets.json"
             "scripts/sync-labels"
             "scripts/validate-template"
           )
@@ -67,6 +97,14 @@ jobs:
           fi
 
           ./scripts/validate-template
+
+      - name: Run script tests
+        shell: bash
+        run: python3 -m unittest discover -s scripts/tests
+
+      - name: Check generated docs TOC
+        shell: bash
+        run: ./scripts/docs-toc --check
 
       - name: Check committed whitespace
         if: github.event_name == 'pull_request'

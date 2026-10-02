@@ -9,6 +9,8 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 - 日本語defaultのIssue FormsとPR template
 - `.github/labels.yml`のlabels baseline
 - `scripts/sync-labels`: GitHub labels を `labels.yml` に同期する helper
+- `scripts/docs-toc`: 長いMarkdownの目次を見出しから生成し、CIで更新漏れを検査する helper
+- `scripts/ci-changes`: 文書だけのPRで重い検証jobを省略してよいかを、fail-closedで判定する helper
 - Dependabot、GitHub Actions静的検証（actionlint、ShellCheck、zizmor、ghalint、pinact）、baseline CI
 - ruleset exampleと初期設定docs
 
@@ -17,7 +19,7 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 1. GitHubの`Use this template`から新規repoを作成する。
 2. READMEと`docs/operations/repo-baseline.md`を生成先repo向けに更新する。
 3. repo固有のbuild、test、release手順を追加する。
-4. `./scripts/validate-template`と`git diff --check`を実行する。
+4. `./scripts/validate-template`、`python3 -m unittest discover -s scripts/tests`、`./scripts/docs-toc --check`、`git diff --check`を実行する。
 5. `docs/operations/manual-tasks.md`を確認し、GitHub側の設定を行う。
 
 ## GitHub運用
@@ -33,7 +35,7 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 
 ## Labels
 
-`.github/labels.yml`がこのtemplateのlabels baselineです。名前は英語のmachine-readable identifier、descriptionは日本語とします。`type`、`priority`、`area`、`status`の4軸で分類し、Issue Formの初期値とDependabotの自動付与にも同じ名前を使います。`status`はIssueの現在状態を表し、必要なOpen Issueに最大1つ付与します。
+`.github/labels.yml`がこのtemplateのlabels baselineです。名前は英語のmachine-readable identifier、descriptionは日本語とします。`type`、`priority`、`area`、`status`、`review`の5軸で分類し、Issue Formの初期値とDependabotの自動付与にも同じ名前を使います。`status`はIssueの現在状態を表し、必要なOpen Issueに最大1つ付与します。`review`はPRに必要な人間のレビュー行動（`routine` / `human` / `decision`）を表し、各PRに1つ付与します。基準は`docs/operations/repo-baseline.md`を参照してください。
 
 GitHub上の既存labelを変更する場合は、まずdry-runで差分、改称、削除候補を確認し、既存Issue/PRへの影響を人間が確認してください。通常のsyncはcreate/updateに限定し、削除は明示的な移行判断がある場合だけ行います。
 

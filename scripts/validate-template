@@ -30,6 +30,9 @@ expected_labels = {
     "status: ready",
     "status: in-progress",
     "status: blocked",
+    "review: routine",
+    "review: human",
+    "review: decision",
 }
 expected_forms = {"bug.yml", "feature.yml", "chore.yml", "documentation.yml", "test.yml", "security.yml"}
 expected_heading_sets = {

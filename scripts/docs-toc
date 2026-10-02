@@ -1,0 +1,193 @@
+#!/usr/bin/env python3
+"""長いMarkdownの目次を見出しから生成し、更新漏れを検査する。
+
+対象文書は scripts/docs-toc-targets.json に列挙する。各文書には
+`<!-- START docs-toc -->` と `<!-- END docs-toc -->` を1組置き、その間だけを書き換える。
+anchorはGitHubの見出しID（github-sluggerと同じ規則）で計算する。
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+import unicodedata
+from dataclasses import dataclass
+from pathlib import Path
+from urllib.parse import quote
+
+START = "<!-- START docs-toc -->"
+END = "<!-- END docs-toc -->"
+ATX_HEADING = re.compile(r"^ {0,3}(#{1,6})(?:[ \t]+(.*?))??(?:[ \t]+#+)?[ \t]*$")
+FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
+MAX_LEVEL = 3
+# encodeURIと同じく、URIの予約文字と非予約文字はencodeしない。
+URI_SAFE = ";,/?:@&=+$-_.!~*'()#"
+
+
+class TocError(Exception):
+    pass
+
+
+@dataclass(frozen=True)
+class Target:
+    path: str
+    include_top_level_sections: bool = False
+
+
+@dataclass(frozen=True)
+class Heading:
+    level: int
+    label: str
+    anchor: str
+
+
+def strip_links(text: str) -> str:
+    return re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", text)
+
+
+def heading_text(source: str) -> str:
+    """見出しのMarkdown記法を除き、GitHubがIDの元にする表示文字列を返す。"""
+    text = re.sub(r"<[^>]+>", "", source)
+    text = strip_links(text)
+    text = re.sub(r"(`+)(.+?)\1", r"\2", text)
+    text = re.sub(r"(\*{1,3})(?=\S)(.+?)(?<=\S)\1", r"\2", text)
+    text = re.sub(r"(?<!\w)(_{1,3})(?=\S)(.+?)(?<=\S)\1(?!\w)", r"\2", text)
+    return text
+
+
+def github_slug(text: str) -> str:
+    # 文字・結合文字・数字・連結符（_）・空白・hyphen以外を除く。
+    kept = []
+    for char in text.lower():
+        category = unicodedata.category(char)
+        if char in " -" or category[0] in "LMN" or category == "Pc":
+            kept.append(char)
+    return "".join(kept).replace(" ", "-")
+
+
+class Slugger:
+    def __init__(self) -> None:
+        self.occurrences: dict[str, int] = {}
+
+    def slug(self, text: str) -> str:
+        original = github_slug(text)
+        result = original
+        while result in self.occurrences:
+            self.occurrences[original] += 1
+            result = f"{original}-{self.occurrences[original]}"
+        self.occurrences[result] = 0
+        return result
+
+
+def outside_fences(lines: list[str]) -> list[tuple[int, str]]:
+    """fenced code blockの外にある行を、行番号付きで返す。"""
+    result: list[tuple[int, str]] = []
+    fence: str | None = None
+    for index, line in enumerate(lines):
+        fence_match = FENCE.match(line)
+        if fence is not None:
+            marker = fence_match.group(1) if fence_match else ""
+            if marker[:1] == fence[0] and len(marker) >= len(fence) and not line.strip().lstrip(fence[0]):
+                fence = None
+            continue
+        if fence_match:
+            fence = fence_match.group(1)
+            continue
+        result.append((index, line))
+    return result
+
+
+def collect_headings(lines: list[str]) -> list[Heading]:
+    """コードブロック外のATX見出しを、文書順にanchor付きで返す。"""
+    headings: list[Heading] = []
+    slugger = Slugger()
+    for _, line in outside_fences(lines):
+        match = ATX_HEADING.match(line)
+        if not match:
+            continue
+        source = (match.group(2) or "").strip()
+        # 表示しない深い見出しも、同名anchorの番号を合わせるため数える。
+        anchor = slugger.slug(heading_text(source))
+        headings.append(Heading(len(match.group(1)), strip_links(source), anchor))
+    return headings
+
+
+def generate_toc(content: str, target: Target) -> str:
+    if not content.startswith("# "):
+        raise TocError(f"{target.path}: 文書先頭のタイトル見出しが必要です")
+    lines = content.split("\n")
+    # コードブロック内のmarkerは記法の例として扱い、置換対象にしない。
+    starts = [index for index, line in outside_fences(lines) if line == START]
+    ends = [index for index, line in outside_fences(lines) if line == END]
+    if len(starts) != 1 or len(ends) != 1 or starts[0] > ends[0]:
+        raise TocError(f"{target.path}: 目次の開始・終了markerを1組置いてください")
+
+    min_level = 1 if target.include_top_level_sections else 2
+    # 先頭の文書タイトルは目次から除外する。
+    items = [
+        "  " * (heading.level - min_level) + f"- [{heading.label}](#{quote(heading.anchor, safe=URI_SAFE)})"
+        for heading in collect_headings(lines)[1:]
+        if min_level <= heading.level <= MAX_LEVEL
+    ]
+    if not items:
+        raise TocError(f"{target.path}: 目次に含める章見出しがありません")
+    block = [START, "", "**目次**", "", *items, "", END]
+    return "\n".join([*lines[: starts[0]], *block, *lines[ends[0] + 1 :]])
+
+
+def load_targets(path: Path) -> list[Target]:
+    try:
+        entries = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise TocError(f"{path}: 対象一覧を読めません: {error}") from error
+    if not isinstance(entries, list):
+        raise TocError(f"{path}: 対象一覧はJSON配列にしてください")
+    targets = []
+    for entry in entries:
+        if not isinstance(entry, dict) or not isinstance(entry.get("path"), str):
+            raise TocError(f"{path}: 各要素に文字列のpathが必要です")
+        targets.append(Target(entry["path"], bool(entry.get("includeTopLevelSections", False))))
+    return targets
+
+
+def sync_tocs(root: Path, targets: list[Target], check: bool = False) -> list[str]:
+    changes: list[tuple[Path, str, str]] = []
+    # 全対象の生成に成功するまで書き込まない。
+    for target in targets:
+        path = root / target.path
+        try:
+            current = path.read_text(encoding="utf-8")
+        except OSError as error:
+            raise TocError(f"{target.path}: 読めません: {error}") from error
+        generated = generate_toc(current, target)
+        if generated != current:
+            changes.append((path, target.path, generated))
+    if not check:
+        for path, _, generated in changes:
+            path.write_text(generated, encoding="utf-8")
+    return [name for _, name, _ in changes]
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Markdownの目次を生成・検査する")
+    parser.add_argument("--check", action="store_true", help="書き換えずに更新漏れだけを検出する")
+    args = parser.parse_args()
+
+    root = Path(__file__).resolve().parent.parent
+    try:
+        changed = sync_tocs(root, load_targets(root / "scripts/docs-toc-targets.json"), args.check)
+    except TocError as error:
+        print(f"[error] {error}", file=sys.stderr)
+        return 1
+    if changed:
+        print(("目次の更新が必要:" if args.check else "目次を更新:"), *changed, sep="\n")
+    if args.check and changed:
+        print("./scripts/docs-toc を実行してください。", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
