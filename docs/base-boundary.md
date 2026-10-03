@@ -50,7 +50,7 @@ PR #35（#31〜#34の対応）と#44（目次生成、review label、CIの省略
 | `.github/dependabot.yml` | `github-actions`のupdaterだけを残す。npmとdockerのupdaterは`app` overlayへ移す |
 | `.github/workflows/ci.yml` | 残す。ただし生成先のbaselineを検査する部分だけにし、template契約の検査（`scripts/validate-template`の呼び出し）を外す |
 | `scripts/docs-toc`、`scripts/docs-toc-targets.json` | Python標準ライブラリだけで動き、言語に依存しない。対象一覧はrepo-template自身の文書を指しているので、生成先で書き換える（基準5） |
-| `scripts/ci-changes` | GitHub側の追加設定なしに動き、未知のpathは必ず検証するので、生成先で重いjobを足しても壊れない |
+| `scripts/ci-changes` | GitHub側の追加設定なしに動き、未知のpathは必ず検証するので、生成先で重いjobを足しても検証を誤って省かない |
 
 ### overlay
 
