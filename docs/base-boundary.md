@@ -27,12 +27,12 @@
 
 ## 分類
 
-PR #35（#31〜#34の対応）を適用した後の状態を対象にします。
+PR #35（#31〜#34の対応）と#44（目次生成、review label、CIの省略判定）を適用した後の状態を対象にします。
 
 | 区分 | 意味 |
 | --- | --- |
 | base | 生成先repositoryにそのまま残す |
-| overlay | `my-toolbox`のoverlayへ移し、必要なrepositoryだけが取り込む |
+| overlay | dotfilesの`templates/overlays/`へ移し、必要なrepositoryだけが`repo-bootstrap`で取り込む。repo-templateに置くと`Use this template`で生成先へ入るため、このrepositoryには置かない |
 | template専用 | repo-template自身の保守に使い、生成先へ持ち込まない |
 | 削除 | 必要な内容を他の場所へ移したうえで削除する |
 
@@ -49,6 +49,8 @@ PR #35（#31〜#34の対応）を適用した後の状態を対象にします�
 | `.github/hyd3-baseline.yml` | dotfilesの`repo-preflight`がprofile判定に使う |
 | `.github/dependabot.yml` | `github-actions`のupdaterだけを残す。npmとdockerのupdaterは`app` overlayへ移す |
 | `.github/workflows/ci.yml` | 残す。ただし生成先のbaselineを検査する部分だけにし、template契約の検査（`scripts/validate-template`の呼び出し）を外す |
+| `scripts/docs-toc`、`scripts/docs-toc-targets.json` | Python標準ライブラリだけで動き、言語に依存しない。対象一覧はrepo-template自身の文書を指しているので、生成先で書き換える（基準5） |
+| `scripts/ci-changes` | GitHub側の追加設定なしに動き、未知のpathは必ず検証するので、生成先で重いjobを足しても壊れない |
 
 ### overlay
 
@@ -68,6 +70,7 @@ PR #35（#31〜#34の対応）を適用した後の状態を対象にします�
 | `docs/operations/repo-baseline.md` | Hyd3 baseline全体の説明。正本はdotfilesの`docs/repository-baseline.md` |
 | `rulesets/default-branch.example.json` | 参考例。rulesetの適用は生成直後の必須作業にしない |
 | `docs/base-boundary.md`（この文書） | template保守用の判断基準 |
+| `scripts/tests/`（`helpers.py`、`test_docs_toc.py`、`test_ci_changes.py`） | baseに残すhelperそのものの回帰test。生成先ではhelperを変更しない限り不要 |
 
 ### 削除
 
@@ -86,16 +89,16 @@ Issue #41 で検討している次の3点は、上の判断基準を満たす限
 ## 既存repositoryの移行方針
 
 - 既存の生成先repositoryへは一括同期しない。各repositoryに手を入れる機会に、dotfilesの`repo-preflight`の結果を見て段階的に追従する。
-- overlayへ移したファイルが既存repositoryに残っていても失敗扱いにしない。dotfilesの`repo-preflight`、`repo-baseline-audit`、`repo-bootstrap`は、baseから外したファイルを必須として扱わないよう追従させる。
+- overlayへ移したファイルが既存repositoryに残っていても失敗扱いにしない。dotfilesの`repo-preflight`と`repo-bootstrap`は、baseから外したファイルを必須として扱わないよう追従させる。
 - ファイルを移すときは、移動先のoverlayへ追加する変更を、baseから外す変更より先にmergeする。overlayから取り込めない期間を作らない。
 
 ## 後続の作業
 
 分類の合意後、次の単位でIssueへ分けます。
 
-1. Dependabot自動化をoverlayへ移す（repo-template、my-toolbox、dotfiles）。
+1. Dependabot自動化をoverlayへ移す（repo-template、dotfiles）。
 2. Actions静的検査のzizmor、ghalint、pinactを`security` overlayへ移し、actionlintをbaseのCIへ残す。
 3. template専用ファイルを生成先へ持ち込まない仕組みを作り、生成先向けのREADME skeletonを用意する（#32 の残り）。
 4. `.github/dependabot.yml`と`.gitignore`の言語固有部分を`app` overlayへ移す。
 5. `docs/operations/manual-tasks.md`を解体し、CIからtemplate契約の検査を外す。
-6. dotfilesの`repo-bootstrap`、`repo-preflight`、`repo-baseline-audit`を新しい境界へ追従させる。
+6. dotfilesの`repo-bootstrap`、`repo-preflight`、`templates/overlays/`を新しい境界へ追従させる。
