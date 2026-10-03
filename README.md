@@ -51,7 +51,7 @@ main上の`.github/labels.yml`、`scripts/sync-labels`、`Sync Labels` workflow�
 
 ## Source of truth
 
-`repo-template`は共通baseの正本です。project type固有の追加物は`my-toolbox/github/templates/{app,tooling,security,dotfiles-public-safe}`で管理し、dotfilesの`repo-bootstrap`がbaseとoverlayをcomposeします。
+`repo-template`は共通baseの正本です。baseに入れるものと入れないものの判断基準、現在の全ファイルの分類は[`docs/base-boundary.md`](docs/base-boundary.md)に記録します。project type固有の追加物（`app`、`tooling`、`security`、`dotfiles-public-safe`のoverlay）はdotfilesで管理し、dotfilesの`repo-bootstrap`がbaseとoverlayをcomposeします。overlayをこのrepositoryに置かないのは、`Use this template`で作ったrepositoryに使わないoverlayまでコピーされるためです。
 
 ## GitHub側の手動設定
 
