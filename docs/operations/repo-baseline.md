@@ -29,7 +29,7 @@
 
 - Issue titleには種別prefixを付けず、`type: bug`、`type: feature`、`type: chore`などのlabelで分類する。
 - PR titleは原則Conventional Commits形式とする。
-- PR本文は`関連Issue`、`概要`、`変更点`、`動作確認`、`補足`の軽量構成とする。
+- PR本文は`ELI5（利用者への変化）`、`関連Issue`、`概要・設計判断`、`変更点`、`検証結果`、`補足・残リスク`の6見出しとする。レビュワーが、誰に何が変わるか、検証の十分性、取り消せるかと影響範囲をPR本文だけで判断できるようにするため。
 - branchは`<type>/<issue-number>-<short-summary>`とする。
 - label nameは英語、descriptionは日本語とし、`type:`、`priority:`、`area:`、`status:`、`review:`の5軸を使う。
 - `type:`はIssueの種別、`priority:`は対応優先度、`area:`は主な対象領域、`status:`は現在のライフサイクル状態、`review:`はPRに必要な人間のレビュー行動を表す。
