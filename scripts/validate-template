@@ -37,11 +37,12 @@ expected_labels = {
 expected_forms = {"bug.yml", "feature.yml", "chore.yml", "documentation.yml", "test.yml", "security.yml"}
 expected_heading_sets = {
     "ja": [
+        "## ELI5（利用者への変化）",
         "## 関連Issue",
-        "## 概要",
+        "## 概要・設計判断",
         "## 変更点",
-        "## 動作確認",
-        "## 補足",
+        "## 検証結果",
+        "## 補足・残リスク",
     ],
 }
 
