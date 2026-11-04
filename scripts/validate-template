@@ -46,6 +46,11 @@ expected_heading_sets = {
     ],
 }
 
+# 依存物や生成物はtemplateの契約を検証する対象ではない。CIでは存在しないが、
+# 手元でinstall後の検証が依存package内の文字列で落ちないよう除外する。
+excluded_dirs = {".git", "node_modules", "dist"}
+
+
 def fail(message: str) -> None:
     raise SystemExit(f"[error] {message}")
 
@@ -128,7 +133,7 @@ legacy_label_references = {
     "30" + ": status/needs-human-review",
 }
 for path in sorted(Path(".").rglob("*")):
-    if not path.is_file() or ".git" in path.parts or path == Path(__file__):
+    if not path.is_file() or excluded_dirs & set(path.parts) or path == Path(__file__):
         continue
     try:
         text = path.read_text(encoding="utf-8")
@@ -160,7 +165,7 @@ legacy_label_patterns = {
     for legacy in legacy_label_references
 }
 for path in sorted(Path(".").rglob("*")):
-    if not path.is_file() or ".git" in path.parts or path == Path(__file__):
+    if not path.is_file() or excluded_dirs & set(path.parts) or path == Path(__file__):
         continue
     try:
         text = path.read_text(encoding="utf-8")
