@@ -74,6 +74,14 @@
   color: "D73A4A"
   description: "外部要因、依存関係、権限等により進行不能"
 
+- name: "status: in-review"
+  color: "7057FF"
+  description: "対応PRがOpenでレビュー、CI、merge待ち"
+
+- name: "status: on-hold"
+  color: "BFDADC"
+  description: "blockerではないが意図的に延期または保留"
+
 - name: "review: routine"
   color: "C2E0C6"
   description: "通常のCI・レビュー手順で進められ、個別の人間判断を必須としない"
@@ -85,3 +93,23 @@
 - name: "review: decision"
   color: "B60205"
   description: "人間の意思決定が確定するまでmergeしない"
+
+- name: "review: formal-verification"
+  color: "5319E7"
+  description: "形式検証で担保でき、人間のmerge前確認を必須としない"
+
+- name: "agent: ready"
+  color: "0E8A16"
+  description: "Agentの処理待ち"
+
+- name: "agent: running"
+  color: "FBCA04"
+  description: "Agentが処理中"
+
+- name: "agent: blocked"
+  color: "B60205"
+  description: "人間の判断待ちでAgentが停止中"
+
+- name: "agent: done"
+  color: "5319E7"
+  description: "Agentの処理が完了した"
