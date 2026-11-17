@@ -14,6 +14,15 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 - Dependabot、GitHub Actions静的検証（actionlint、ShellCheck、zizmor、ghalint、pinact）、baseline CI
 - ruleset exampleと初期設定docs
 
+## Copierでの生成と更新（推奨）
+
+このテンプレートはCopierに対応しています。GitHubの`Use this template`は生成した瞬間のコピーで終わりますが、Copierで生成すると、その後のbaseline変更を生成先へ取り込めます。
+
+- 生成: `copier copy gh:Hyd3-14/repo-template <dest>`（質問はrepo名と説明の2つだけ）
+- 更新: 生成先で作業ツリーがきれいな状態にして `copier update`
+- 生成時の回答と版は、生成先の`.copier-answers.yml`に記録されます。手で書き換えないでください
+- `AGENTS.md`と`.github/workflows/ci.yml`は生成先が書き換える前提のため、更新では上書きしません（skip_if_exists）。それ以外のbaselineファイルは3方向マージで同期されます
+
 ## Use this template
 
 1. GitHubの`Use this template`から新規repoを作成する。
