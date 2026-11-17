@@ -1,0 +1,26 @@
+# Copier template configuration for the Hyd3 repository baseline.
+# Generate:  copier copy gh:Hyd3-14/repo-template <dest>
+# Update:    copier update (inside a generated repository)
+
+_min_copier_version: "9.0.0"
+
+project_name:
+  type: str
+  help: "Repository name (used in the generated README)"
+  default: "my-repo"
+
+project_description:
+  type: str
+  help: "One-line description of the repository"
+  default: ""
+
+# Files a generated repository is expected to rewrite for itself.
+# They are created on the first copy and never overwritten by updates.
+_skip_if_exists:
+  - "AGENTS.md"
+  - ".github/workflows/ci.yml"
+
+# The template repository's own README is not part of the baseline.
+# Generated repositories receive README.md.jinja instead.
+_exclude:
+  - "README.md"
