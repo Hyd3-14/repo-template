@@ -2,6 +2,8 @@
 
 <!-- 「対象:」に、変化が及ぶ人を 利用者 / 開発者 / 運用者 から選んで書く（複数可）。利用者はこのrepositoryの成果物を使う人、開発者はrepositoryを変更する人とAgent、運用者はdeploy・本番環境・secretを管理する人 -->
 <!-- 続けて、専門用語を使わず、その人たちの何が変わるかを1〜2文で書く。変更前と変更後が分かるようにする -->
+<!-- 例（利用者）: 設定画面を使う人が、保存前に変更内容を確認できるようになる。これまでは保存するまで変更が分からなかった -->
+<!-- 例（開発者）: テンプレートの検証を1コマンドで実行できるようになる -->
 
 対象:
 
@@ -10,7 +12,7 @@
 closes #
 
 <!-- 完了するIssueごとにclosesを書く。未完了の関連IssueはRefsと残りを書き、親Issueを一部完了だけで閉じない。Issueのない小さな変更では「なし」と書く -->
-<!-- labelに review: routine / review: human / review: decision のいずれか1つを付ける。基準は docs/operations/repo-baseline.md の「レビュー要求label」 -->
+<!-- labelに review: routine / review: human / review: decision / review: formal-verification のいずれか1つを付ける。基準は docs/operations/repo-baseline.md の「レビュー要求label」 -->
 
 ## 概要・設計判断
 

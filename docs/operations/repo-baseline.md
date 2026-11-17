@@ -31,8 +31,8 @@
 - PR titleは原則Conventional Commits形式とする。
 - PR本文は`ELI5（利用者への変化）`、`関連Issue`、`概要・設計判断`、`変更点`、`検証結果`、`補足・残リスク`の6見出しとする。レビュワーが、誰に何が変わるか、検証の十分性、取り消せるかと影響範囲をPR本文だけで判断できるようにするため。
 - branchは`<type>/<issue-number>-<short-summary>`とする。
-- label nameは英語、descriptionは日本語とし、`type:`、`priority:`、`area:`、`status:`、`review:`の5軸を使う。
-- `type:`はIssueの種別、`priority:`は対応優先度、`area:`は主な対象領域、`status:`は現在のライフサイクル状態、`review:`はPRに必要な人間のレビュー行動を表す。
+- label nameは英語、descriptionは日本語とし、`type:`、`priority:`、`area:`、`status:`、`review:`、`agent:`の6軸を使う。
+- `type:`はIssueの種別、`priority:`は対応優先度、`area:`は主な対象領域、`status:`は現在のライフサイクル状態、`review:`はPRに必要な人間のレビュー行動、`agent:`はAgentへ委任した作業の処理状態を表す。
 - 原則として`type:`は1つ、`priority:`は必要なIssueだけ、`area:`は主対象を1つ付与する。横断Issueでは`area:`を複数付与してよい。`status:`は必要なIssueに最大1つ付与し、状態遷移時は付け替える。`review:`はPRに1つ付与する。
 - Dependabotは`github-actions`、`npm`、`docker`をweeklyで更新し、minor/patchをgroupingする。更新には7日間のcooldownを設け、majorは人間レビューとする。
 - Dependabotのminor/patch更新は、`Dependabot auto-merge eligibility`と、`Baseline static checks`、`GitHub Actions Static Checks`が成功し、非draftの同一repository PRである場合だけ自動マージ対象とする。PRのdraft状態は手動保留の手段として維持する。
@@ -53,17 +53,20 @@ Dependabotのmetadata取得・label付与とrequired check後のauto-mergeには
 
 ## Labels
 
-`.github/labels.yml`が宣言上の正本です。共通baselineは次の22 labelsです。
+`.github/labels.yml`が宣言上の正本です。共通baselineは次の29 labelsです。
 
 - `type: feature`、`type: bug`、`type: chore`、`type: documentation`、`type: test`、`type: security`
 - `priority: P0`、`priority: P1`、`priority: P2`
 - `area: app`、`area: database`、`area: dependency`、`area: devex`、`area: ci`、`area: deployment`
-- `status: needs-discussion`、`status: ready`、`status: in-progress`、`status: blocked`
-- `review: routine`、`review: human`、`review: decision`
+- `status: needs-discussion`、`status: ready`、`status: in-progress`、`status: blocked`、`status: in-review`、`status: on-hold`
+- `review: routine`、`review: human`、`review: decision`、`review: formal-verification`
+- `agent: ready`、`agent: running`、`agent: blocked`、`agent: done`
+
+`area:`は主対象の目安であり、repo固有の領域（特定のサブシステム等）は生成先で追加してよい。追加した`area:`のうち汎用性があるものは、templateへ還流する。
 
 既存labelを移行する場合は、共通scriptへrepo固有の対応表を埋め込まず、対象repoの実行時に`--rename OLD=NEW`を明示します。GitHub APIの改称を使うため、既存Issue/PRへの付与を保ったまま移行できます。削除を伴う場合は、先にdry-runで差分と利用状況を確認してください。
 
-`status:`はOpen Issueの必須項目にはせず、相談待ち・着手可能・作業中・ブロック中を検索したい場合に使います。完了はGitHub IssueのOpen/Closedを正本とし、`status: done`や`status: closed`は追加しません。GitHub ProjectsのStatusを本格運用する場合は、二重管理コストを評価し、Project側を正本にする選択肢を残します。
+`status:`はOpen Issueの必須項目にはせず、相談待ち・着手可能・作業中・ブロック中・レビュー待ち・保留を検索したい場合に使います。完了はGitHub IssueのOpen/Closedを正本とし、`status: done`や`status: closed`は追加しません。GitHub ProjectsのStatusを本格運用する場合は、二重管理コストを評価し、Project側を正本にする選択肢を残します。
 
 ### レビュー要求label
 
@@ -75,11 +78,12 @@ PR作成者またはAI Agentは、PR作成時に変更内容と関連Issueを確
 | --- | --- | --- |
 | `review: routine` | 通常のCI・レビュー手順で進められ、個別の人間判断を必須としない | 誤字修正、既存方針に沿ったpatch / minorの依存更新、挙動を変えないtestや文書の追加 |
 | `review: human` | merge前に人間による内容確認が必要 | 画面や外部から見える挙動の変更、開発フロー・hook・CI・Agent向け指示の変更、DB migration、既存仕様に沿った認証・認可の変更 |
+| `review: formal-verification` | 形式検証で担保できる変更で、人間のmerge前確認を必須としない | 形式検証の対象になっている不変条件・型・契約の変更で、検証が通っているもの |
 | `review: decision` | 仕様・権限・運用・Production等の意思決定が確定するまでmergeしない | 未確定の仕様、権限や役割の新設・変更、データの保持・削除の決定、Production・deploy・secret運用の変更 |
 
 分類では次を守ります。
 
-- 1つのPRに`review:*`を複数付けない。複数に当てはまる場合は、より上位（`routine` < `human` < `decision`）の1つだけを付ける。
+- 1つのPRに`review:*`を複数付けない。複数に当てはまる場合は、より上位（`routine`／`formal-verification` < `human` < `decision`）の1つだけを付ける。
 - `review:*`が付いていないPRを`review: routine`とみなさない。未設定は分類漏れとして扱い、気づいた人が分類する。
 - 次の領域を含むPRは`review: routine`にしない。既存仕様の範囲内なら`review: human`以上、新しい判断を含むなら`review: decision`にする。
   - 認証・認可、権限・役割
@@ -93,7 +97,7 @@ PR作成者またはAI Agentは、PR作成時に変更内容と関連Issueを確
 ```text
 is:pr is:open label:"review: human"
 is:pr is:open label:"review: decision"
-is:pr is:open -label:"review: routine" -label:"review: human" -label:"review: decision"
+is:pr is:open -label:"review: routine" -label:"review: human" -label:"review: decision" -label:"review: formal-verification"
 ```
 
 最後の検索は、分類漏れのPRを見つけるために使います。`review:*`はレビュー要求だけを表し、merge可能かどうかの判定、AIレビューの実行、GitHub ProjectsのStatusによる工程管理は担いません。
