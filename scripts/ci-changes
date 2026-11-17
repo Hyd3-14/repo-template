@@ -19,6 +19,8 @@ from pathlib import PurePosixPath
 SKIPPABLE_FILES = frozenset(
     {
         "README.md",
+        "README.md.jinja",
+        ".github/README.md",
         "AGENTS.md",
         "CLAUDE.md",
         "CONTRIBUTING.md",
