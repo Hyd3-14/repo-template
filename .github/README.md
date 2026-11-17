@@ -26,7 +26,7 @@ Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から
 ## Use this template
 
 1. GitHubの`Use this template`から新規repoを作成する。
-2. READMEと`docs/operations/repo-baseline.md`を生成先repo向けに更新する。
+2. `README.md.jinja`を元に生成先repoのREADMEを作成する（Copierで生成した場合はレンダリング済みのREADMEが入っている）。`docs/operations/repo-baseline.md`は共通仕様としてそのまま使う。
 3. repo固有のbuild、test、release手順を追加する。
 4. `./scripts/validate-template`、`python3 -m unittest discover -s scripts/tests`、`./scripts/docs-toc --check`、`git diff --check`を実行する。
 5. `docs/operations/manual-tasks.md`を確認し、GitHub側の設定を行う。

@@ -62,7 +62,8 @@ def fail(message: str) -> None:
     raise SystemExit(f"[error] {message}")
 
 required = [
-    Path("README.md"),
+    Path("README.md.jinja"),
+    Path(".github/README.md"),
     Path("AGENTS.md"),
     Path("SECURITY.md"),
     Path(".editorconfig"),

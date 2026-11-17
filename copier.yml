@@ -20,7 +20,19 @@ _skip_if_exists:
   - "AGENTS.md"
   - ".github/workflows/ci.yml"
 
-# The template repository's own README is not part of the baseline.
-# Generated repositories receive README.md.jinja instead.
+# NOTE: setting _exclude replaces Copier's default exclusion list,
+# so the defaults are repeated here explicitly. Without them, .git and
+# copier.yml itself leak into generated repositories.
+# The template repository's own README lives in .github/README.md and
+# is not part of the baseline; generated repositories receive the
+# rendered README.md.jinja instead.
 _exclude:
-  - "README.md"
+  - "copier.yaml"
+  - "copier.yml"
+  - "~*"
+  - "*.py[co]"
+  - "__pycache__"
+  - ".git"
+  - ".DS_Store"
+  - ".svn"
+  - ".github/README.md"

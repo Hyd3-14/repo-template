@@ -56,7 +56,6 @@ jobs:
           set -euo pipefail
           required_files=(
             "AGENTS.md"
-            "README.md"
             "SECURITY.md"
             ".editorconfig"
             ".gitattributes"
@@ -94,6 +93,12 @@ jobs:
           done
           if [ "$missing" -ne 0 ]; then
             exit "$missing"
+          fi
+
+          # The template repository itself keeps README.md.jinja instead of README.md.
+          if [ ! -f "README.md" ] && [ ! -f "README.md.jinja" ]; then
+            echo "::error file=README.md::Required baseline file is missing"
+            exit 1
           fi
 
           ./scripts/validate-template
