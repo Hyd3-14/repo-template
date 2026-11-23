@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+"""rulesets/default-branch.json の宣言と GitHub の ruleset の差分を確認・適用する。"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+
+def run_gh(args: list[str], payload: str | None = None) -> str:
+    completed = subprocess.run(
+        ["gh", *args],
+        check=True,
+        text=True,
+        input=payload,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    return completed.stdout
+
+
+def load_declaration(path: Path) -> dict:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    for key in ("name", "target", "enforcement", "conditions", "rules"):
+        if key not in data:
+            raise ValueError(f"宣言に {key} がありません")
+    return data
+
+
+def canonical(ruleset: dict, declared_keys: dict[str, set[str]]) -> dict:
+    """比較に使う項目だけへ絞る。サーバーが補う既定値は無視する。"""
+    rules = []
+    for rule in ruleset.get("rules", []):
+        entry: dict = {"type": rule["type"]}
+        parameters = rule.get("parameters")
+        if parameters is not None:
+            keys = declared_keys.get(rule["type"], set(parameters))
+            entry["parameters"] = {
+                key: parameters[key] for key in sorted(keys) if key in parameters
+            }
+        rules.append(entry)
+    rules.sort(key=lambda entry: entry["type"])
+    return {
+        "name": ruleset.get("name"),
+        "target": ruleset.get("target"),
+        "enforcement": ruleset.get("enforcement"),
+        "conditions": ruleset.get("conditions"),
+        "rules": rules,
+    }
+
+
+def declared_parameter_keys(declaration: dict) -> dict[str, set[str]]:
+    keys: dict[str, set[str]] = {}
+    for rule in declaration["rules"]:
+        if "parameters" in rule:
+            keys[rule["type"]] = set(rule["parameters"])
+    return keys
+
+
+def find_ruleset(repo: str, name: str) -> dict | None:
+    listed = json.loads(run_gh(["api", f"repos/{repo}/rulesets"]))
+    for item in listed:
+        if item.get("name") == name:
+            return json.loads(
+                run_gh(["api", f"repos/{repo}/rulesets/{item['id']}"])
+            )
+    return None
+
+
+def describe_diff(declared: dict, current: dict) -> list[str]:
+    keys = declared_parameter_keys(declared)
+    want = canonical(declared, keys)
+    have = canonical(current, keys)
+    lines = []
+    for field in ("name", "target", "enforcement", "conditions"):
+        if want[field] != have[field]:
+            lines.append(f"DIFF {field}: {have[field]} -> {want[field]}")
+    want_rules = {rule["type"]: rule for rule in want["rules"]}
+    have_rules = {rule["type"]: rule for rule in have["rules"]}
+    for rule_type in sorted(set(want_rules) | set(have_rules)):
+        if rule_type not in have_rules:
+            lines.append(f"DIFF rule {rule_type}: なし -> あり")
+        elif rule_type not in want_rules:
+            lines.append(f"DIFF rule {rule_type}: あり -> なし")
+        elif want_rules[rule_type] != have_rules[rule_type]:
+            lines.append(
+                f"DIFF rule {rule_type}: {json.dumps(have_rules[rule_type].get('parameters', {}), sort_keys=True)}"
+                f" -> {json.dumps(want_rules[rule_type].get('parameters', {}), sort_keys=True)}"
+            )
+    return lines
+
+
+def apply_ruleset(repo: str, declaration: dict, current: dict | None) -> None:
+    payload = json.dumps(declaration)
+    if current is None:
+        run_gh(["api", "-X", "POST", f"repos/{repo}/rulesets", "--input", "-"], payload=payload)
+    else:
+        run_gh(
+            ["api", "-X", "PUT", f"repos/{repo}/rulesets/{current['id']}", "--input", "-"],
+            payload=payload,
+        )
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--repo", required=True, help="GitHub repository as OWNER/REPO")
+    parser.add_argument("--file", default="rulesets/default-branch.json")
+    parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args()
+
+    try:
+        declaration = load_declaration(Path(args.file))
+    except (OSError, ValueError, json.JSONDecodeError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+
+    current = find_ruleset(args.repo, declaration["name"])
+    if current is None:
+        print(f"CREATE ruleset {declaration['name']}: まだ存在しない")
+        if not args.apply:
+            print("dry-run: pass --apply to create the ruleset")
+            return 0
+        apply_ruleset(args.repo, declaration, None)
+        print(f"created ruleset {declaration['name']} on {args.repo}")
+        return 0
+
+    diffs = describe_diff(declaration, current)
+    if not diffs:
+        print(f"OK ruleset {declaration['name']}: 宣言と一致")
+        return 0
+    for line in diffs:
+        print(line)
+    if not args.apply:
+        print("dry-run: pass --apply to update the ruleset")
+        return 0
+    apply_ruleset(args.repo, declaration, current)
+    print(f"updated ruleset {declaration['name']} on {args.repo}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

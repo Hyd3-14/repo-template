@@ -9,7 +9,7 @@ repository fileだけでは完了しないGitHub側の設定を記録します�
 - [ ] 利用可能ならsecret scanningとprivate vulnerability reportingを有効にする。
 - [ ] GitHub Actionsのdefault token permissionをread-onlyにする。
 - [ ] `Baseline static checks`、`GitHub Actions Static Checks`の実際のcheck名を確認する。
-- [ ] default branchのrulesetまたはbranch protectionへ必要なcheckを設定する。
+- [ ] `scripts/apply-rulesets --repo OWNER/REPO --apply`でdefault branchのrulesetを適用する（宣言は`rulesets/default-branch.json`）。
 - [ ] `GitHub Actions Static Checks`が`actionlint`成功後に`zizmor`、`ghalint`、`pinact`を実行し、4結果を集約していることを確認する。
 - [ ] Dependabotの`Dependabot auto-merge eligibility` checkが`pull_request_target`側でminor/patchだけ成功し、`workflow_run`側でその最新結果を再確認していることを確認する。
 - [ ] DependabotのGitHub Actions更新がfull SHAとversion annotationを維持したPRになることを確認する。

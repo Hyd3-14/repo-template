@@ -187,6 +187,21 @@ for key, value in {
         fail(f"Actions policyの{key}が標準と一致しません")
 if not Path("scripts/apply-repo-settings").is_file():
     fail("scripts/apply-repo-settingsが必要です")
+if not Path("scripts/apply-rulesets").is_file():
+    fail("scripts/apply-rulesetsが必要です")
+ruleset_path = Path("rulesets/default-branch.json")
+if not ruleset_path.is_file():
+    fail("rulesets/default-branch.jsonが必要です")
+else:
+    import json as _json
+
+    ruleset = _json.loads(ruleset_path.read_text(encoding="utf-8"))
+    if ruleset.get("enforcement") != "active":
+        fail("rulesetのenforcementはactiveにしてください")
+    rule_types = {rule.get("type") for rule in ruleset.get("rules", [])}
+    for required_type in ("deletion", "non_fast_forward", "pull_request", "required_status_checks"):
+        if required_type not in rule_types:
+            fail(f"rulesetに{required_type}ルールが必要です")
 for key, value in {
     "allow_merge_commit": "true",
     "allow_squash_merge": "true",
