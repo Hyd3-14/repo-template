@@ -132,18 +132,7 @@ is:pr is:open -label:"review: routine" -label:"review: human" -label:"review: de
 
 生成先 repository の README は `README.md.jinja` が骨格です。冒頭は中央寄せのタイトルと1行説明とし、英日2ファイルで公開する場合だけ言語切り替えを中央寄せ＋縦棒区切りで置きます。badge は、CIの状態や公開packageのversionなど、実在を確認できたものだけを置きます。確認できないbadgeは置きません。
 
-節の順序と扱いは次のとおりです。
-
-| 節 | 扱い |
-| --- | --- |
-| What this is | 必須。何をするものか、誰に向けたものかを書く |
-| Features | 必須。確認できた機能だけを短く列挙する |
-| Quick Start | 必須。前提と、実行して確認した最短の手順を書く |
-| Usage | 必須。代表的な使い方を例で書く |
-| Configuration | 任意。設定項目が無い repository では節ごと削除する |
-| Development | 必須。開発と検証のコマンドを書く |
-| License | 必須。`LICENSE` へリンクする |
-| Baseline | 必須。Copier 生成の注記と本書へのポインタを維持する |
+節の順序と必須・任意の扱いは `README.md.jinja` が定義し、`scripts/validate-template` が検査します。README を書く手順は write-readme Skill（[Hyd3-14/skills](https://github.com/Hyd3-14/skills)）を参照してください。節の一覧はここに重ねて書きません。
 
 `Roadmap`、`Contact`、`Acknowledgments` は置きません。内容は実装で確認した事実だけを書き、未実装の計画を機能として書かないでください。
 
