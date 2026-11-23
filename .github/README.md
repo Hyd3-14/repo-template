@@ -1,8 +1,8 @@
-# Hyd3 Repository Template
+<h1 align="center">Hyd3 Repository Template</h1>
 
-A [Copier](https://copier.readthedocs.io/) template that gives a new GitHub repository a working baseline — issue and PR conventions, labels, repository settings, a branch ruleset, and CI checks — as files and scripts. Setup is one generation plus three apply commands, instead of an afternoon of clicking through Settings pages.
+<p align="center">A <a href="https://copier.readthedocs.io/">Copier</a> template that gives a new GitHub repository a working baseline — issue and PR conventions, labels, repository settings, a branch ruleset, and CI checks — as files and scripts. Setup is one generation plus three apply commands, instead of an afternoon of clicking through Settings pages.</p>
 
-日本語版: [README.ja.md](README.ja.md)
+<p align="center">English | <a href="README.ja.md">日本語</a></p>
 
 ## What you get
 
@@ -54,6 +54,6 @@ GitHub's **Use this template** button also works, but it is a one-time copy and 
 - `scripts/ci-changes` (skips heavy jobs for docs-only PRs, fail-closed) and `scripts/docs-toc` (generates and checks tables of contents)
 - Operations docs: `docs/operations/repo-baseline.md` is the spec, and `docs/operations/manual-tasks.md` lists what stays manual (Dependabot alerts, secrets, and similar)
 
-## Source of truth
+## Where things live
 
-This repository is the canonical common base. Project-type overlays live in `my-toolbox/github/templates/{app,tooling,security,dotfiles-public-safe}` and are composed on top of this base by dotfiles' `repo-bootstrap`.
+This repository is where the common base is maintained. Anything specific to a single project is kept with that project, not here.

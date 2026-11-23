@@ -1,8 +1,8 @@
-# Hyd3 Repository Template
+<h1 align="center">Hyd3 Repository Template</h1>
 
-新しい GitHub リポジトリに、Issue と PR の型、ラベル、リポジトリ設定、ブランチの ruleset、CI チェックまでそろった baseline を、ファイルとスクリプトで入れる [Copier](https://copier.readthedocs.io/) テンプレートです。セットアップは生成1回と適用コマンド3本で終わり、Settings の画面を順にクリックする作業は要りません。
+<p align="center">新しい GitHub リポジトリに、Issue と PR の型、ラベル、リポジトリ設定、ブランチの ruleset、CI チェックまでそろった baseline を、ファイルとスクリプトで入れる <a href="https://copier.readthedocs.io/">Copier</a> テンプレートです。セットアップは生成1回と適用コマンド3本で終わり、Settings の画面を順にクリックする作業は要りません。</p>
 
-English: [README.md](README.md)
+<p align="center"><a href="README.md">English</a> | 日本語</p>
 
 ## 得られるもの
 
@@ -54,6 +54,6 @@ GitHub の **Use this template** ボタンでも作れますが、その場合�
 - `scripts/ci-changes`（文書だけの PR では重い job を省略する。判定できない場合は省略しない）と `scripts/docs-toc`（目次の生成と検査）
 - 運用文書：仕様は `docs/operations/repo-baseline.md`、手作業が残る項目（Dependabot alerts、secrets など）は `docs/operations/manual-tasks.md`
 
-## 正本
+## 管理場所
 
-このリポジトリが共通 base の正本です。プロジェクト種別ごとの追加物は `my-toolbox/github/templates/{app,tooling,security,dotfiles-public-safe}` で管理し、dotfiles の `repo-bootstrap` が base の上に重ねます。
+共通 base はこのリポジトリで管理します。特定のプロジェクトにだけ関係するものは、このリポジトリには入れず、そのプロジェクト側で管理します。
