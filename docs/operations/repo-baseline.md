@@ -15,9 +15,9 @@
 - [CIの省略判定](#ci%E3%81%AE%E7%9C%81%E7%95%A5%E5%88%A4%E5%AE%9A)
 - [Required files](#required-files)
 - [検証](#%E6%A4%9C%E8%A8%BC)
-- [リポジトリ設定](#%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E8%A8%AD%E5%AE%9A)
 - [mise task](#mise-task)
 - [secret content scan](#secret-content-scan)
+- [リポジトリ設定](#%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E8%A8%AD%E5%AE%9A)
 - [GitHub側で残る設定](#github%E5%81%B4%E3%81%A7%E6%AE%8B%E3%82%8B%E8%A8%AD%E5%AE%9A)
 
 <!-- END docs-toc -->
@@ -152,6 +152,7 @@ is:pr is:open -label:"review: routine" -label:"review: human" -label:"review: de
 - `scripts/docs-toc`
 - `scripts/docs-toc-targets.json`
 - `scripts/check-baseline`
+- `scripts/baseline-static-checks`
 
 ## 検証
 

@@ -16,7 +16,7 @@ depends = ["baseline:check", "docs:check", "lint", "secrets:scan", "test"]
 
 [tasks."baseline:check"]
 description = "必須file、空白、secretらしいfile名、workflowのpermissions、template契約を検査する"
-run = "./scripts/check-baseline"
+run = "./scripts/baseline-static-checks"
 
 [tasks.test]
 description = "scripts/のunit testを実行する"
@@ -34,7 +34,7 @@ run = "./scripts/docs-toc --check"
 description = "GitHub Actions workflowとshell scriptを静的検査する"
 run = [
   "actionlint",
-  "shellcheck scripts/check-baseline scripts/validate-template",
+  "shellcheck scripts/baseline-static-checks",
 ]
 
 [tasks."secrets:scan"]
