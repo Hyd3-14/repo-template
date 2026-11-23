@@ -81,6 +81,7 @@ jobs:
             "scripts/docs-toc"
             "scripts/docs-toc-targets.json"
             "scripts/sync-labels"
+            "scripts/apply-repo-settings"
             "scripts/validate-template"
           )
 
