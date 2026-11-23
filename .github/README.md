@@ -57,3 +57,11 @@ GitHub's **Use this template** button also works, but it is a one-time copy and 
 ## Where things live
 
 This repository is where the common base is maintained. Anything specific to a single project is kept with that project, not here.
+
+## Influences
+
+The conventions in this baseline did not appear from nowhere:
+
+- The pull request style — a short brief a reviewer can judge quickly, backed by evidence rather than volume — follows the spirit of the `pr` skill in [mattpocock/skills](https://github.com/mattpocock/skills), which builds on HumanLayer's [show-me](https://github.com/humanlayer/skills) skill.
+- The preference for deterministic checks (tests, linters, contract validation) over reviewer heroics comes from working with pstack (poteto-mode).
+- Generation and later updates are handled by [Copier](https://copier.readthedocs.io/), so a baseline change is a template change, not a manual edit in every repository.
