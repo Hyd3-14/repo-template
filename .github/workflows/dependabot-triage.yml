@@ -11,6 +11,11 @@ on: # zizmor: ignore[dangerous-triggers] Required for Dependabot metadata and la
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+
 jobs:
   triage:
     name: Label Dependabot update type

@@ -19,6 +19,11 @@ on: # zizmor: ignore[dangerous-triggers] Required for API-only Dependabot gating
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+
 jobs:
   automerge:
     name: Guarded automerge

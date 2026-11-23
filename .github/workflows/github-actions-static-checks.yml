@@ -11,9 +11,14 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+
 jobs:
-  actionlint:
-    name: actionlint
+  jactionlint:
+    name: jactionlint
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -23,21 +28,22 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Run actionlint
+      - name: Install mise tools
+        uses: jdx/mise-action@7a4e45a543138629540c9a1616d08632b893e492 # v5.0.1
+        with:
+          version: 2026.9.6
+          install: true
+          cache: true
+      # 構文・型（旧actionlint）と権限・timeoutなどのポリシー（旧ghalint）を.github/jactionlint.yamlで検査する。
+      - name: Run jactionlint
         shell: bash
         run: |
           set -euo pipefail
-          # The pinned official actionlint v1.7.12 image includes ShellCheck.
-          docker run --rm \
-            -v "$PWD":/repo \
-            --workdir /repo \
-            rhysd/actionlint@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667 \
-            -color \
-            -shellcheck /usr/local/bin/shellcheck
+          jactionlint --shellcheck "$(command -v shellcheck)" --pyflakes '' --format github
 
   zizmor:
     name: zizmor
-    needs: actionlint
+    needs: jactionlint
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -55,37 +61,9 @@ jobs:
           token: ${{ github.token }}
           version: v1.29.0
 
-  ghalint:
-    name: ghalint
-    needs: actionlint
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Download and verify ghalint
-        shell: bash
-        env:
-          GHALINT_VERSION: 1.5.6
-          GHALINT_SHA256: 98ee0e3330de7286f470d1e89c03ff7ce70d7a5998ba0f15969c400447be579c
-        run: |
-          set -euo pipefail
-          archive="$RUNNER_TEMP/ghalint.tar.gz"
-          curl --fail --location --retry 3 --silent --show-error \
-            --output "$archive" \
-            "https://github.com/suzuki-shunsuke/ghalint/releases/download/v${GHALINT_VERSION}/ghalint_${GHALINT_VERSION}_linux_amd64.tar.gz"
-          printf '%s  %s\n' "$GHALINT_SHA256" "$archive" | sha256sum --check --strict
-          tar --extract --gzip --file "$archive" --directory "$RUNNER_TEMP"
-          "$RUNNER_TEMP/ghalint" version
-          "$RUNNER_TEMP/ghalint" run
-
   pinact:
     name: pinact
-    needs: actionlint
+    needs: jactionlint
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -121,9 +99,8 @@ jobs:
     name: GitHub Actions Static Checks
     if: ${{ always() }}
     needs:
-      - actionlint
+      - jactionlint
       - zizmor
-      - ghalint
       - pinact
     runs-on: ubuntu-latest
     timeout-minutes: 5

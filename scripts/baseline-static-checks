@@ -33,6 +33,7 @@ required_files=(
   "mise.lock"
   ".github/dependabot.yml"
   ".github/repo-baseline.yml"
+  ".github/jactionlint.yaml"
   ".github/labels.yml"
   ".github/ISSUE_TEMPLATE/bug.yml"
   ".github/ISSUE_TEMPLATE/chore.yml"

@@ -9,6 +9,11 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+
 jobs:
   # 重い検証jobを追加する場合は、`needs: changes`と
   # `if: needs.changes.outputs.run_heavy == 'true'`で文書だけの変更時に省略する。
