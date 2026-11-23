@@ -37,3 +37,5 @@ _exclude:
   - ".svn"
   - ".github/README.md"
   - ".github/README.ja.md"
+  - "docs/getting-started.md"
+  - "docs/getting-started.ja.md"
