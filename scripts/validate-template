@@ -59,7 +59,7 @@ required = [
     Path(".gitattributes"),
     Path(".gitignore"),
     Path(".github/dependabot.yml"),
-    Path(".github/hyd3-baseline.yml"),
+    Path(".github/repo-baseline.yml"),
     Path(".github/labels.yml"),
     Path(".github/workflows/ci.yml"),
     Path(".github/workflows/dependabot-triage.yml"),
@@ -172,7 +172,7 @@ for path in sorted(Path(".").rglob("*")):
         if pattern.search(text):
             fail(f"旧label参照が残っています: {path}: {legacy}")
 
-marker = Path(".github/hyd3-baseline.yml").read_text(encoding="utf-8")
+marker = Path(".github/repo-baseline.yml").read_text(encoding="utf-8")
 if not re.search(r'^branch_naming:\s*["\']?<type>/<issue-number>-<short-summary>["\']?\s*$', marker, flags=re.MULTILINE):
     fail("branch_namingが標準と一致しません")
 if not re.search(r'^actions_static_checks:\s*\.github/workflows/github-actions-static-checks\.yml\s*$', marker, flags=re.MULTILINE):
