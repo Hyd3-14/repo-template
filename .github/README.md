@@ -1,69 +1,59 @@
 # Hyd3 Repository Template
 
-Hyd3 repositoryの共通base templateです。GitHubの`Use this template`から新規repoを作成できる公開形を維持します。
+A [Copier](https://copier.readthedocs.io/) template that gives a new GitHub repository a working baseline — issue and PR conventions, labels, repository settings, a branch ruleset, and CI checks — as files and scripts. Setup is one generation plus three apply commands, instead of an afternoon of clicking through Settings pages.
 
-## 含まれるもの
+日本語版: [README.ja.md](README.ja.md)
 
-- 軽量な`AGENTS.md`
-- `.editorconfig`、`.gitattributes`、`.gitignore`
-- 日本語defaultのIssue FormsとPR template
-- `.github/labels.yml`のlabels baseline
-- `scripts/sync-labels`: GitHub labels を `labels.yml` に同期する helper
-- `scripts/docs-toc`: 長いMarkdownの目次を見出しから生成し、CIで更新漏れを検査する helper
-- `scripts/ci-changes`: 文書だけのPRで重い検証jobを省略してよいかを、fail-closedで判定する helper
-- Dependabot、GitHub Actions静的検証（actionlint、ShellCheck、zizmor、ghalint、pinact）、baseline CI
-- ruleset exampleと初期設定docs
+## What you get
 
-## Copierでの生成と更新（推奨）
+| Area | Starting from scratch | With this template |
+| --- | --- | --- |
+| Issues | Free-form titles, ad-hoc labels | Forms for 6 types; the type is set automatically on creation, and priority and dates live in Issue Fields |
+| Labels | Whatever accumulates over time | An 18-label baseline declared in `.github/labels.yml` and synced by script |
+| Pull requests | No template, uneven detail | A template with ELI5, linked issue, design notes, verification, and risk sections; one `review:` label per PR |
+| Repository settings | Clicked through by hand, easy to miss one | Declared in `.github/repo-baseline.yml`, applied with `scripts/apply-repo-settings` |
+| Default branch | Unprotected until someone remembers | A ruleset declared in `rulesets/default-branch.json` (PR required, status checks required, no force push, no deletion), applied with `scripts/apply-rulesets` |
+| CI | Set up per repository | Baseline checks plus GitHub Actions static analysis (actionlint, zizmor, ghalint, pinact) |
+| Dependencies | Manual updates | Dependabot weekly with a 7-day cooldown; minor and patch updates auto-merge when checks pass |
+| Later baseline changes | Re-do the setup by hand | `copier update` pulls baseline changes into generated repositories |
 
-このテンプレートはCopierに対応しています。GitHubの`Use this template`は生成した瞬間のコピーで終わりますが、Copierで生成すると、その後のbaseline変更を生成先へ取り込めます。
+## Quick start
 
-- 生成: `copier copy gh:Hyd3-14/repo-template <dest>`（質問はrepo名と説明の2つだけ）
-- 更新: 生成先で作業ツリーがきれいな状態にして `copier update`
-- 生成時の回答と版は、生成先の`.copier-answers.yml`に記録されます。手で書き換えないでください
-- `AGENTS.md`と`.github/workflows/ci.yml`は生成先が書き換える前提のため、更新では上書きしません（skip_if_exists）。それ以外のbaselineファイルは3方向マージで同期されます
+For agents: run these commands in order, in a shell where `gh` is authenticated.
 
-## Use this template
+```bash
+# 1. Generate (two questions: repository name and description)
+copier copy gh:Hyd3-14/repo-template <dest>
+cd <dest>
 
-1. GitHubの`Use this template`から新規repoを作成する。
-2. `README.md.jinja`を元に生成先repoのREADMEを作成する（Copierで生成した場合はレンダリング済みのREADMEが入っている）。`docs/operations/repo-baseline.md`は共通仕様としてそのまま使う。
-3. repo固有のbuild、test、release手順を追加する。
-4. `./scripts/validate-template`、`python3 -m unittest discover -s scripts/tests`、`./scripts/docs-toc --check`、`git diff --check`を実行する。
-5. `docs/operations/manual-tasks.md`を確認し、GitHub側の設定を行う。
+# 2. Create the GitHub repository and push (skip if it already exists)
+gh repo create <owner>/<repo> --public --source=. --push
 
-## GitHub運用
+# 3. Apply the baseline to GitHub
+python3 scripts/sync-labels --repo <owner>/<repo> --apply
+python3 scripts/apply-repo-settings --repo <owner>/<repo> --apply
+python3 scripts/apply-rulesets --repo <owner>/<repo> --apply
 
-- Issue titleには種別prefixを付けず、種別はlabelsで表す。
-- PR titleは原則Conventional Commits形式とし、squash merge時の履歴へそのまま利用できるようにする。
-- Issue Formは`feature`、`bug`、`chore`、`documentation`、`test`、`security`の6 typeに対応する。
-- PR templateのcanonicalは`.github/PULL_REQUEST_TEMPLATE/default.md`とする。GitHubの通常のPR作成画面でも読み込めるよう、同内容の`.github/pull_request_template.md`をcompatibility aliasとして置く。
-- branchは`<type>/<issue-number>-<short-summary>`を標準とする。
-- GitHub Actionsの各jobは必要最小限の`permissions`と`timeout-minutes`を明示し、外部Actionはfull 40-character commit SHA、checkoutは`persist-credentials: false`とする。GitHub contextをshellへ渡す場合はstep-level `env:`を介する。
-- `.github/workflows/github-actions-static-checks.yml`で`actionlint`（ShellCheck連携）、`zizmor`、`ghalint`、`pinact`を検証する。
-- Dependabotは`github-actions`、`npm`、`docker`をweeklyで更新し、minor/patchをgroupingする。majorは人間レビューとし、minor/patchも`Dependabot auto-merge eligibility`、`Baseline static checks`、`GitHub Actions Static Checks`が成功した場合だけ自動マージする。PRをdraftにすると手動保留として扱う。
-
-## Labels
-
-`.github/labels.yml`がこのtemplateのlabels baselineです。名前は英語のmachine-readable identifier、descriptionは日本語とします。`type`、`priority`、`area`、`status`、`review`の5軸で分類し、Issue Formの初期値とDependabotの自動付与にも同じ名前を使います。`status`はIssueの現在状態を表し、必要なOpen Issueに最大1つ付与します。`review`はPRに必要な人間のレビュー行動（`routine` / `human` / `decision`）を表し、各PRに1つ付与します。基準は`docs/operations/repo-baseline.md`を参照してください。
-
-GitHub上の既存labelを変更する場合は、まずdry-runで差分、改称、削除候補を確認し、既存Issue/PRへの影響を人間が確認してください。通常のsyncはcreate/updateに限定し、削除は明示的な移行判断がある場合だけ行います。
-
-```sh
-scripts/sync-labels --repo OWNER/REPO --dry-run
-scripts/sync-labels --repo OWNER/REPO --dry-run --rename 'OLD LABEL=NEW LABEL' --prune
-scripts/sync-labels --repo OWNER/REPO --apply --rename 'OLD LABEL=NEW LABEL' --prune
+# 4. Verify
+./scripts/validate-template
+python3 -m unittest discover -s scripts/tests
 ```
 
-main上の`.github/labels.yml`、`scripts/sync-labels`、`Sync Labels` workflowを変更すると、create/updateをGitHub labelsへ自動適用します。初回や任意の再同期はActionsから`workflow_dispatch`で実行できます。
+Every apply script accepts `--dry-run` to show the diff before changing anything. Run `apply-rulesets` last: it requires the baseline CI checks to exist in the repository.
 
-`--rename OLD=NEW`は、GitHub APIのlabel改称を使って既存Issue/PRへの付与を保ったまま移行する明示的なmappingです。`--prune`を付けたdry-runで`DELETE`候補を確認し、不要なlabelを削除できると判断した場合だけ`--apply --prune`を実行してください。
+GitHub's **Use this template** button also works, but it is a one-time copy and later baseline changes do not flow in. Copier records the template version in `.copier-answers.yml` and supports `copier update`.
+
+## What is included
+
+- `AGENTS.md`, `.editorconfig`, `.gitattributes`, `.gitignore`
+- Issue Forms for 6 types and a PR template, Japanese by default
+- The labels baseline and `scripts/sync-labels`
+- The repository settings declaration and `scripts/apply-repo-settings`
+- The default-branch ruleset declaration and `scripts/apply-rulesets`
+- Baseline CI, GitHub Actions static checks, and Dependabot configuration
+- `scripts/ci-changes` (skips heavy jobs for docs-only PRs, fail-closed) and `scripts/docs-toc` (generates and checks tables of contents)
+- Operations docs: `docs/operations/repo-baseline.md` is the spec, and `docs/operations/manual-tasks.md` lists what stays manual (Dependabot alerts, secrets, and similar)
 
 ## Source of truth
 
-`repo-template`は共通baseの正本です。project type固有の追加物は`my-toolbox/github/templates/{app,tooling,security,dotfiles-public-safe}`で管理し、dotfilesの`repo-bootstrap`がbaseとoverlayをcomposeします。
-
-## GitHub側の手動設定
-
-このrepositoryのファイルだけではbranch protection、ruleset、secrets、Dependabot alerts、private vulnerability reportingは完了しません。初期導入時は`docs/operations/manual-tasks.md`を確認してください。
-
-> 共通baseは、追加のGitHub Code Security / Advanced Security機能を契約していない個人private repositoryでも動作する構成を基準とします。Dependency Reviewなど利用条件のある機能は、生成先repoで利用可能性を確認して追加してください。
+This repository is the canonical common base. Project-type overlays live in `my-toolbox/github/templates/{app,tooling,security,dotfiles-public-safe}` and are composed on top of this base by dotfiles' `repo-bootstrap`.
