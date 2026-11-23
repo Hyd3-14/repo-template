@@ -1,0 +1,138 @@
+#!/usr/bin/env python3
+""".github/hyd3-baseline.yml の repository_settings と GitHub のリポジトリ設定の差分を確認・適用する。"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+BOOL_KEYS = {
+    "allow_merge_commit",
+    "allow_squash_merge",
+    "allow_rebase_merge",
+    "allow_auto_merge",
+    "allow_update_branch",
+    "delete_branch_on_merge",
+}
+TITLE_KEYS = {"merge_commit_title", "squash_merge_commit_title"}
+MESSAGE_KEYS = {"merge_commit_message", "squash_merge_commit_message"}
+TITLE_VALUES = {"PR_TITLE", "MERGE_MESSAGE"}
+MESSAGE_VALUES = {"PR_BODY", "COMMIT_MESSAGES", "BLANK"}
+
+
+def run_gh(args: list[str], payload: str | None = None) -> str:
+    completed = subprocess.run(
+        ["gh", *args],
+        check=True,
+        text=True,
+        input=payload,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    return completed.stdout
+
+
+def parse_settings(path: Path) -> dict[str, bool | str]:
+    """hyd3-baseline.yml の repository_settings 節だけを読む。"""
+    settings: dict[str, bool | str] = {}
+    in_section = False
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        if raw_line.startswith("repository_settings:"):
+            in_section = True
+            continue
+        if in_section:
+            if raw_line and not raw_line.startswith(" "):
+                break
+            line = raw_line.strip()
+            if not line or line.startswith("#"):
+                continue
+            key, _, value = line.partition(":")
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if key in BOOL_KEYS:
+                if value not in ("true", "false"):
+                    raise ValueError(f"{key} は true / false で書いてください: {value}")
+                settings[key] = value == "true"
+            elif key in TITLE_KEYS:
+                if value not in TITLE_VALUES:
+                    raise ValueError(f"{key} の値が不正です: {value}")
+                settings[key] = value
+            elif key in MESSAGE_KEYS:
+                if value not in MESSAGE_VALUES:
+                    raise ValueError(f"{key} の値が不正です: {value}")
+                settings[key] = value
+            else:
+                raise ValueError(f"repository_settings に未知の key があります: {key}")
+    if not settings:
+        raise ValueError(f"{path} に repository_settings がありません")
+    missing = (BOOL_KEYS | TITLE_KEYS | MESSAGE_KEYS) - settings.keys()
+    if missing:
+        raise ValueError(f"repository_settings に不足があります: {', '.join(sorted(missing))}")
+    return settings
+
+
+def current_settings(repo: str, keys: list[str]) -> dict[str, bool | str]:
+    data = json.loads(run_gh(["api", f"repos/{repo}"]))
+    return {key: data.get(key) for key in keys}
+
+
+def diff_settings(
+    declared: dict[str, bool | str], current: dict[str, bool | str]
+) -> list[tuple[str, bool | str, bool | str]]:
+    """(key, 現在値, 宣言値) のうち、値が違うものだけを返す。"""
+    return [
+        (key, current.get(key), declared[key])
+        for key in sorted(declared)
+        if current.get(key) != declared[key]
+    ]
+
+
+def format_value(value: bool | str | None) -> str:
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    return str(value)
+
+
+def apply_settings(repo: str, declared: dict[str, bool | str]) -> None:
+    payload = json.dumps(declared)
+    run_gh(["api", "-X", "PATCH", f"repos/{repo}", "--input", "-"], payload=payload)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--repo", required=True, help="GitHub repository as OWNER/REPO")
+    parser.add_argument("--file", default=".github/hyd3-baseline.yml")
+    parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args()
+
+    try:
+        declared = parse_settings(Path(args.file))
+    except (OSError, ValueError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+
+    current = current_settings(args.repo, sorted(declared))
+    diffs = diff_settings(declared, current)
+    for key in sorted(declared):
+        if current.get(key) == declared[key]:
+            print(f"OK {key}: {format_value(declared[key])}")
+    for key, before, after in diffs:
+        print(f"DIFF {key}: {format_value(before)} -> {format_value(after)}")
+
+    if not diffs:
+        print("no drift")
+        return 0
+    if not args.apply:
+        print("dry-run: pass --apply to update repository settings")
+        return 0
+    apply_settings(args.repo, declared)
+    print(f"applied {len(diffs)} setting(s) to {args.repo}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

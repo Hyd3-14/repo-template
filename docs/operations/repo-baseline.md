@@ -15,6 +15,7 @@
 - [CIの省略判定](#ci%E3%81%AE%E7%9C%81%E7%95%A5%E5%88%A4%E5%AE%9A)
 - [Required files](#required-files)
 - [検証](#%E6%A4%9C%E8%A8%BC)
+- [リポジトリ設定](#%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E8%A8%AD%E5%AE%9A)
 - [GitHub側で残る設定](#github%E5%81%B4%E3%81%A7%E6%AE%8B%E3%82%8B%E8%A8%AD%E5%AE%9A)
 
 <!-- END docs-toc -->
@@ -165,6 +166,25 @@ pinact run --check --verify-comment
 `pinact`はversion annotationの検証時にGitHub APIを使うため、必要に応じてstep-levelの`GITHUB_TOKEN`またはローカルの認証済み環境を用意します。生成先repoでは、上記CLIを利用可能なversion固定済みの開発環境へ組み込んでください。
 
 dotfiles側の`repo-preflight --agent`とcross-repo drift検査は、生成先repoへ必要な場合だけ適用します。
+
+## リポジトリ設定
+
+Pull Requestsのマージ方法やauto-mergeの可否などのリポジトリ設定は、`.github/hyd3-baseline.yml`の`repository_settings`が宣言上の正本です。共通baselineは次の値です。
+
+- マージ方法はmerge commit、squash、rebaseのすべてを許可する
+- `allow_auto_merge`はtrueとする。Dependabotのminor/patch更新の自動マージは、この設定が前提になる
+- `allow_update_branch`はfalseとする
+- `delete_branch_on_merge`はtrueとし、マージしたPRのブランチを自動で消す
+- merge commitとsquashの既定メッセージは、タイトルをPRタイトル（`PR_TITLE`）、本文を空（`BLANK`）とする
+
+適用は`scripts/apply-repo-settings`で行います。`--dry-run`で宣言と実物のズレを確認し、`--apply`でGitHub APIから流します。
+
+```bash
+python3 scripts/apply-repo-settings --repo OWNER/REPO --dry-run
+python3 scripts/apply-repo-settings --repo OWNER/REPO --apply
+```
+
+生成先repoでは、リポジトリを作った直後と、宣言を変更したときに実行します。値の変更はtemplate側の`repository_settings`を正として還流します。
 
 ## GitHub側で残る設定
 
