@@ -82,6 +82,8 @@ jobs:
             "scripts/docs-toc-targets.json"
             "scripts/sync-labels"
             "scripts/apply-repo-settings"
+            "scripts/apply-rulesets"
+            "rulesets/default-branch.json"
             "scripts/validate-template"
           )
 

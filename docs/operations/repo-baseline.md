@@ -186,6 +186,13 @@ python3 scripts/apply-repo-settings --repo OWNER/REPO --apply
 
 生成先repoでは、リポジトリを作った直後と、宣言を変更したときに実行します。値の変更はtemplate側の`repository_settings`を正として還流します。
 
+default branchのrulesetも宣言と適用に寄せます。宣言は`rulesets/default-branch.json`（PR必須・承認0件、必須チェックは`Baseline static checks`と`GitHub Actions Static Checks`、force pushと削除の禁止、required_linear_history）で、適用は`scripts/apply-rulesets`で行います。rulesetは個人アカウントのprivateリポジトリでも使えます。ただし必須チェックは、そのリポジトリで実際に走るcheckでなければマージを止めてしまうため、適用前にdry-runと合わせてcheckの有無を確認します。
+
+```bash
+python3 scripts/apply-rulesets --repo OWNER/REPO --dry-run
+python3 scripts/apply-rulesets --repo OWNER/REPO --apply
+```
+
 ## GitHub側で残る設定
 
-branch protectionまたはruleset、required checks、Dependabot alerts、secret scanning、private vulnerability reporting、secrets、GitHub App権限はファイルから自動適用しません。共通baseは追加のGitHub Code Security / Advanced Security機能を要求せず、Dependency Reviewなど利用条件のあるcheckは生成先repoでoptionalに追加します。`manual-tasks.md`に確認項目を残します。
+Dependabot alerts、secret scanning、private vulnerability reporting、secrets、GitHub App権限はファイルから自動適用しません。共通baseは追加のGitHub Code Security / Advanced Security機能を要求せず、Dependency Reviewなど利用条件のあるcheckは生成先repoでoptionalに追加します。`manual-tasks.md`に確認項目を残します。
