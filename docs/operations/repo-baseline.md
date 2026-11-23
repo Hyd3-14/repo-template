@@ -193,6 +193,12 @@ python3 scripts/apply-rulesets --repo OWNER/REPO --dry-run
 python3 scripts/apply-rulesets --repo OWNER/REPO --apply
 ```
 
+対象リポジトリがbaselineのどこまで来ているかは、`scripts/check-baseline`でまとめて確認できます。labels、リポジトリ設定、rulesetの3領域について一致か差分かを表示し、差分があれば終了コード1を返します。rulesetの必須チェックに対応するworkflowが無い場合は、適用するとマージが止まる旨も警告します。
+
+```bash
+python3 scripts/check-baseline --repo OWNER/REPO
+```
+
 ## GitHub側で残る設定
 
 Dependabot alerts、secret scanning、private vulnerability reporting、secrets、GitHub App権限はファイルから自動適用しません。共通baseは追加のGitHub Code Security / Advanced Security機能を要求せず、Dependency Reviewなど利用条件のあるcheckは生成先repoでoptionalに追加します。`manual-tasks.md`に確認項目を残します。
