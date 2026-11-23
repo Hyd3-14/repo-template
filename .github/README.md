@@ -58,7 +58,7 @@ GitHub's **Use this template** button also works, but it is a one-time copy and 
 
 ## Where things live
 
-This repository is where the common base is maintained. Anything specific to a single project is kept with that project, not here.
+This repository is where the common base is maintained. Anything specific to a single project is kept with that project, not here. What belongs in the base and what does not is recorded in [docs/base-boundary.md](../docs/base-boundary.md).
 
 ## Influences
 

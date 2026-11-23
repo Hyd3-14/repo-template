@@ -102,3 +102,15 @@ Issue #41 で検討している次の3点は、上の判断基準を満たす限
 4. `.github/dependabot.yml`と`.gitignore`の言語固有部分を`app` overlayへ移す。
 5. `docs/operations/manual-tasks.md`を解体し、CIからtemplate契約の検査を外す。
 6. dotfilesの`repo-bootstrap`、`repo-preflight`、`templates/overlays/`を新しい境界へ追従させる。
+
+## 追補（2026-11-23）
+
+この分類は2026-10時点の状態を対象にしている。その後に追加されたファイルの分類は次のとおり。
+
+| ファイル | 区分 | 理由 |
+| --- | --- | --- |
+| `.github/repo-baseline.yml` の `repository_settings`、`scripts/apply-repo-settings` | base | 宣言と適用の仕組みは全 repository で使う |
+| `rulesets/default-branch.json`、`scripts/apply-rulesets` | base | ruleset の宣言と適用も baseline の一部として生成先へ配る |
+| `scripts/check-baseline` | base | 対象 repository と baseline の差分報告は生成先でも使う |
+| `docs/getting-started.md`、`docs/getting-started.ja.md` | template専用 | template repository 側の案内のため、copier の除外に入れて生成先へ配らない |
+| `.github/README.md`、`.github/README.ja.md` | template専用 | 生成先へは配らない（copier の除外） |
