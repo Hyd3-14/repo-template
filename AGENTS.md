@@ -9,4 +9,4 @@
 - GitHub contextの値をshellへ渡すときはstep-level `env:`を介し、shell内では環境変数をquoteする。静的なAction inputは`with:`に置く。
 - repo固有のbuild、test、release手順は生成先repoのdocsへ追加する。
 - PR作成時は、変更内容と関連Issueを確認して`review:*` labelを1つ付ける。迷う場合は上位の分類にし、変更ファイルの種類だけで`review: routine`へ下げない。基準は[`docs/operations/repo-baseline.md`の「レビュー要求label」](docs/operations/repo-baseline.md#レビュー要求label)を参照する。
-- 変更時は`./scripts/validate-template`、`python3 -m unittest discover -s scripts/tests`、`./scripts/docs-toc --check`、`git diff --check`を実行する。
+- 開発toolとtaskはmiseで管理する。変更時は`mise run validate`を実行する。
