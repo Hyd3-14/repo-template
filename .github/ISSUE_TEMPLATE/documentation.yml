@@ -1,7 +1,6 @@
 name: ドキュメント変更
 description: READMEや設計・運用ドキュメントの変更を起票する
-labels:
-  - "type: documentation"
+type: Documentation
 body:
   - type: textarea
     id: target

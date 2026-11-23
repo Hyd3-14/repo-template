@@ -1,39 +1,3 @@
-- name: "type: feature"
-  color: "0E8A16"
-  description: "新機能または機能追加"
-
-- name: "type: bug"
-  color: "D73A4A"
-  description: "不具合修正"
-
-- name: "type: chore"
-  color: "C5DEF5"
-  description: "保守、設定、運用改善"
-
-- name: "type: documentation"
-  color: "0075CA"
-  description: "ドキュメント変更"
-
-- name: "type: test"
-  color: "1D76DB"
-  description: "テスト、検証、再現手順の追加"
-
-- name: "type: security"
-  color: "B60205"
-  description: "セキュリティ対応"
-
-- name: "priority: P0"
-  color: "B60205"
-  description: "最優先で対応する"
-
-- name: "priority: P1"
-  color: "D93F0B"
-  description: "優先して対応する"
-
-- name: "priority: P2"
-  color: "FBCA04"
-  description: "通常の優先度で対応する"
-
 - name: "area: app"
   color: "1D76DB"
   description: "アプリケーションの挙動やUI"
@@ -61,14 +25,6 @@
 - name: "status: needs-discussion"
   color: "D93F0B"
   description: "オーナーやメンバーとの相談、意思決定が必要"
-
-- name: "status: ready"
-  color: "0E8A16"
-  description: "前提が揃っており着手可能"
-
-- name: "status: in-progress"
-  color: "1D76DB"
-  description: "現在作業中"
 
 - name: "status: blocked"
   color: "D73A4A"

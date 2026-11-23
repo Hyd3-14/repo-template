@@ -11,15 +11,6 @@ import re
 from pathlib import Path
 
 expected_labels = {
-    "type: feature",
-    "type: bug",
-    "type: chore",
-    "type: documentation",
-    "type: test",
-    "type: security",
-    "priority: P0",
-    "priority: P1",
-    "priority: P2",
     "area: app",
     "area: database",
     "area: dependency",
@@ -27,8 +18,6 @@ expected_labels = {
     "area: ci",
     "area: deployment",
     "status: needs-discussion",
-    "status: ready",
-    "status: in-progress",
     "status: blocked",
     "status: in-review",
     "status: on-hold",
@@ -202,9 +191,9 @@ if dependabot.count("default-days: 7") != 3:
     fail("Dependabotの全updaterに7日間のcooldownが必要です")
 
 expected_dependabot_labels = {
-    "github-actions": {"type: chore", "area: dependency", "area: ci"},
-    "npm": {"type: chore", "area: dependency"},
-    "docker": {"type: chore", "area: dependency"},
+    "github-actions": {"area: dependency", "area: ci"},
+    "npm": {"area: dependency"},
+    "docker": {"area: dependency"},
 }
 for ecosystem, expected in expected_dependabot_labels.items():
     match = re.search(

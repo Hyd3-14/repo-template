@@ -1,7 +1,6 @@
 name: セキュリティ改善
 description: hardening、権限見直し、安全性検証などを起票する
-labels:
-  - "type: security"
+type: Security
 body:
   - type: markdown
     attributes:

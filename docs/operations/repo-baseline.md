@@ -27,13 +27,13 @@
 
 ## 共通仕様
 
-- Issue titleには種別prefixを付けず、`type: bug`、`type: feature`、`type: chore`などのlabelで分類する。
+- Issue titleには種別prefixを付けず、Issue Type（Feature、Bug、Chore、Documentation、Test、Security）で分類する。
 - PR titleは原則Conventional Commits形式とする。
 - PR本文は`ELI5（利用者への変化）`、`関連Issue`、`概要・設計判断`、`変更点`、`検証結果`、`補足・残リスク`の6見出しとする。レビュワーが、誰に何が変わるか、検証の十分性、取り消せるかと影響範囲をPR本文だけで判断できるようにするため。
 - branchは`<type>/<issue-number>-<short-summary>`とする。
-- label nameは英語、descriptionは日本語とし、`type:`、`priority:`、`area:`、`status:`、`review:`、`agent:`の6軸を使う。
-- `type:`はIssueの種別、`priority:`は対応優先度、`area:`は主な対象領域、`status:`は現在のライフサイクル状態、`review:`はPRに必要な人間のレビュー行動、`agent:`はAgentへ委任した作業の処理状態を表す。
-- 原則として`type:`は1つ、`priority:`は必要なIssueだけ、`area:`は主対象を1つ付与する。横断Issueでは`area:`を複数付与してよい。`status:`は必要なIssueに最大1つ付与し、状態遷移時は付け替える。`review:`はPRに1つ付与する。
+- label nameは英語、descriptionは日本語とし、`area:`、`status:`、`review:`、`agent:`の4軸を使う。種別と優先度はlabelでは持たず、GitHubのIssue TypeとIssue Fieldsで持つ。
+- `area:`は主な対象領域、`status:`は例外状態（相談待ち、ブロック中、レビュー待ち、保留）、`review:`はPRに必要な人間のレビュー行動、`agent:`はAgentへ委任した作業の処理状態を表す。
+- 原則として`area:`は主対象を1つ付与する。横断Issueでは`area:`を複数付与してよい。`status:`は必要なIssueに最大1つ付与し、状態が解消したら外す。`review:`はPRに1つ付与する。
 - Dependabotは`github-actions`、`npm`、`docker`をweeklyで更新し、minor/patchをgroupingする。更新には7日間のcooldownを設け、majorは人間レビューとする。
 - Dependabotのminor/patch更新は、`Dependabot auto-merge eligibility`と、`Baseline static checks`、`GitHub Actions Static Checks`が成功し、非draftの同一repository PRである場合だけ自動マージ対象とする。PRのdraft状態は手動保留の手段として維持する。
 
@@ -53,24 +53,24 @@ Dependabotのmetadata取得・label付与とrequired check後のauto-mergeには
 
 ## Labels
 
-`.github/labels.yml`が宣言上の正本です。共通baselineは次の29 labelsです。
+`.github/labels.yml`が宣言上の正本です。共通baselineは次の18 labelsです。
 
-- `type: feature`、`type: bug`、`type: chore`、`type: documentation`、`type: test`、`type: security`
-- `priority: P0`、`priority: P1`、`priority: P2`
 - `area: app`、`area: database`、`area: dependency`、`area: devex`、`area: ci`、`area: deployment`
-- `status: needs-discussion`、`status: ready`、`status: in-progress`、`status: blocked`、`status: in-review`、`status: on-hold`
+- `status: needs-discussion`、`status: blocked`、`status: in-review`、`status: on-hold`
 - `review: routine`、`review: human`、`review: decision`、`review: formal-verification`
 - `agent: ready`、`agent: running`、`agent: blocked`、`agent: done`
 
 `area:`は主対象の目安であり、repo固有の領域（特定のサブシステム等）は生成先で追加してよい。追加した`area:`のうち汎用性があるものは、templateへ還流する。
 
+種別はIssue Typeで持ちます。共通の種別はFeature、Bug、Chore、Documentation、Test、Securityの6種で、Issue Formの`type:`キーが起票時に自動で設定します。優先度と期日はIssue Fieldsで持ちます（Priority、Start date、Target date）。旧`priority:` labelとの対応は、P0がUrgent、P1がHigh、P2がMediumです。Lowは優先度を付けないIssueの受け皿（いつかやる保管枠）とします。Issue Fieldsの値はIssue FormやURLからは設定できないため、Issueのサイドバー、Projects、API、GitHub Actionsのいずれかで設定します。TypeにpinしたFieldsだけがIssue画面へ自動表示されます。
+
 既存labelを移行する場合は、共通scriptへrepo固有の対応表を埋め込まず、対象repoの実行時に`--rename OLD=NEW`を明示します。GitHub APIの改称を使うため、既存Issue/PRへの付与を保ったまま移行できます。削除を伴う場合は、先にdry-runで差分と利用状況を確認してください。
 
-`status:`はOpen Issueの必須項目にはせず、相談待ち・着手可能・作業中・ブロック中・レビュー待ち・保留を検索したい場合に使います。完了はGitHub IssueのOpen/Closedを正本とし、`status: done`や`status: closed`は追加しません。GitHub ProjectsのStatusを本格運用する場合は、二重管理コストを評価し、Project側を正本にする選択肢を残します。
+`status:`は例外状態の印としてだけ使います。通常の進捗（未着手、作業中、完了）はGitHub ProjectsのStatus（Todo、In Progress、Done）を正本とし、Projectの組み込み自動化で動かします。完了はGitHub IssueのOpen/Closedを正本とし、`status: done`や`status: closed`は追加しません。
 
 ### レビュー要求label
 
-`review:*` labelは、そのPRに対してレビュワーが次に取る行動を表します。`type:*`や`area:*`が変更の種類・領域を表すのに対し、`review:*`は「人間が見る必要があるか」「人間の意思決定を待つ必要があるか」をPR一覧から判別するために使います。
+`review:*` labelは、そのPRに対してレビュワーが次に取る行動を表します。Issue Typeや`area:*`が変更の種類・領域を表すのに対し、`review:*`は「人間が見る必要があるか」「人間の意思決定を待つ必要があるか」をPR一覧から判別するために使います。
 
 PR作成者またはAI Agentは、PR作成時に変更内容と関連Issueを確認し、次のいずれか1つを付けます。
 
