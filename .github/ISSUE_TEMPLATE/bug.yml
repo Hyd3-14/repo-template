@@ -1,7 +1,6 @@
 name: バグ報告
 description: 再現可能な不具合や回帰を報告する
-labels:
-  - "type: bug"
+type: Bug
 body:
   - type: markdown
     attributes:

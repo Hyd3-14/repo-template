@@ -1,7 +1,6 @@
 name: テスト・検証
 description: テスト追加、再現検証、品質確認を起票する
-labels:
-  - "type: test"
+type: Test
 body:
   - type: textarea
     id: scope

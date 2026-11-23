@@ -39,7 +39,7 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
         shell: bash
         run: |
-          gh pr edit "$PR_URL" --add-label "type: chore,area: dependency,priority: P1"
+          gh pr edit "$PR_URL" --add-label "area: dependency"
 
       - name: Label minor updates
         if: steps.metadata.outputs.update-type == 'version-update:semver-minor'
@@ -48,7 +48,7 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
         shell: bash
         run: |
-          gh pr edit "$PR_URL" --add-label "type: chore,area: dependency"
+          gh pr edit "$PR_URL" --add-label "area: dependency"
 
       - name: Label patch updates
         if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
@@ -57,7 +57,7 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
         shell: bash
         run: |
-          gh pr edit "$PR_URL" --add-label "type: chore,area: dependency"
+          gh pr edit "$PR_URL" --add-label "area: dependency"
 
   mark-auto-merge-eligibility:
     name: Dependabot auto-merge eligibility
