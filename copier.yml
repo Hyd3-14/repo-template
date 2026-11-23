@@ -36,3 +36,4 @@ _exclude:
   - ".DS_Store"
   - ".svn"
   - ".github/README.md"
+  - ".github/README.ja.md"
