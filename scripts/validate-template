@@ -51,8 +51,6 @@ def fail(message: str) -> None:
     raise SystemExit(f"[error] {message}")
 
 required = [
-    Path("README.md.jinja"),
-    Path(".github/README.md"),
     Path("AGENTS.md"),
     Path("CLAUDE.md"),
     Path("SECURITY.md"),
@@ -78,6 +76,15 @@ required = [
 for path in required:
     if not path.is_file():
         fail(f"必須ファイルがありません: {path}")
+
+# READMEは、template repository自身では生成元のREADME.md.jinjaとtemplate用READMEを、
+# 生成先repositoryでは生成済みのREADME.mdを必須とする。
+if Path("README.md.jinja").is_file():
+    for path in [Path(".github/README.md")]:
+        if not path.is_file():
+            fail(f"必須ファイルがありません: {path}")
+elif not Path("README.md").is_file():
+    fail("必須ファイルがありません: README.md")
 
 if "@AGENTS.md" not in Path("CLAUDE.md").read_text(encoding="utf-8").split():
     fail("CLAUDE.mdは@AGENTS.mdを読み込む必要があります")
@@ -249,7 +256,7 @@ for key, value in {
         fail(f"repository_settingsの{key}が標準と一致しません")
 
 dependabot = Path(".github/dependabot.yml").read_text(encoding="utf-8")
-if dependabot.count("default-days: 7") != 3:
+if dependabot.count("default-days: 7") != dependabot.count("- package-ecosystem:"):
     fail("Dependabotの全updaterに7日間のcooldownが必要です")
 
 expected_dependabot_labels = {
@@ -263,7 +270,11 @@ for ecosystem, expected in expected_dependabot_labels.items():
         dependabot,
     )
     if not match:
-        fail(f"Dependabot updaterがありません: {ecosystem}")
+        # baseで必須なのはgithub-actionsだけ。npmとdockerはapp overlay側で、
+        # 存在する場合だけlabel構成を検査する。
+        if ecosystem == "github-actions":
+            fail(f"Dependabot updaterがありません: {ecosystem}")
+        continue
     actual = set(
         re.findall(r'^      - ["\']([^"\']+)["\']\s*$', match.group("body"), flags=re.MULTILINE)
     )
