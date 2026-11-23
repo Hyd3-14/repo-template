@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+"""対象リポジトリが baseline のどこまで来ているかを、labels・リポジトリ設定・ruleset の3領域でまとめて報告する。"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+SCRIPTS = Path(__file__).resolve().parent
+LABEL_DRIFT_PREFIXES = ("CREATE ", "UPDATE ", "STALE ", "DELETE ", "RENAME ")
+REQUIRED_CHECK_FILES = {
+    "Baseline static checks": ".github/workflows/ci.yml",
+    "GitHub Actions Static Checks": ".github/workflows/github-actions-static-checks.yml",
+}
+
+
+def run_script(name: str, repo: str) -> str:
+    completed = subprocess.run(
+        [sys.executable, str(SCRIPTS / name), "--repo", repo, "--dry-run"],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if completed.returncode != 0:
+        raise RuntimeError(f"{name} が失敗しました: {completed.stderr.strip()}")
+    return completed.stdout
+
+
+def run_gh(args: list[str]) -> str:
+    completed = subprocess.run(
+        ["gh", *args],
+        check=True,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    return completed.stdout
+
+
+def summarize_labels(output: str) -> tuple[bool, str]:
+    drift = [
+        line
+        for line in output.splitlines()
+        if line.startswith(LABEL_DRIFT_PREFIXES)
+    ]
+    if drift:
+        return False, f"差分 {len(drift)} 件"
+    return True, "一致"
+
+
+def summarize_settings(output: str) -> tuple[bool, str]:
+    drift = [line for line in output.splitlines() if line.startswith("DIFF ")]
+    if drift:
+        return False, f"差分 {len(drift)} 件"
+    return True, "一致"
+
+
+def summarize_ruleset(output: str) -> tuple[bool, str]:
+    if output.startswith("CREATE "):
+        return False, "未作成"
+    drift = [line for line in output.splitlines() if line.startswith("DIFF ")]
+    if drift:
+        return False, f"差分 {len(drift)} 件"
+    return True, "一致"
+
+
+def missing_required_checks(repo: str) -> list[str]:
+    """ruleset の必須チェックに対応する workflow ファイルが無いものを返す。"""
+    try:
+        listing = json.loads(
+            run_gh(["api", f"repos/{repo}/contents/.github/workflows"])
+        )
+        names = {item["name"] for item in listing}
+    except Exception:
+        return []
+    missing = []
+    for context, path in REQUIRED_CHECK_FILES.items():
+        if Path(path).name not in names:
+            missing.append(context)
+    return missing
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--repo", required=True, help="GitHub repository as OWNER/REPO")
+    args = parser.parse_args()
+
+    try:
+        labels_out = run_script("sync-labels", args.repo)
+        settings_out = run_script("apply-repo-settings", args.repo)
+        ruleset_out = run_script("apply-rulesets", args.repo)
+    except RuntimeError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 2
+
+    areas = [
+        ("labels", summarize_labels(labels_out)),
+        ("repository settings", summarize_settings(settings_out)),
+        ("ruleset", summarize_ruleset(ruleset_out)),
+    ]
+    print(f"baseline check: {args.repo}")
+    all_ok = True
+    for name, (ok, detail) in areas:
+        print(f"{'OK' if ok else 'DIFF'} {name}: {detail}")
+        all_ok = all_ok and ok
+
+    missing = missing_required_checks(args.repo)
+    if missing:
+        print(
+            "WARN ruleset の必須チェックに対応する workflow が見つかりません: "
+            + ", ".join(missing)
+            + "。このまま ruleset を適用するとマージが止まります"
+        )
+
+    print("result: " + ("すべて一致" if all_ok else "差分あり（各 apply スクリプトの --apply で修正できます）"))
+    return 0 if all_ok else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

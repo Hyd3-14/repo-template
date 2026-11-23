@@ -59,3 +59,11 @@ GitHub の **Use this template** ボタンでも作れますが、その場合�
 ## 管理場所
 
 共通 base はこのリポジトリで管理します。特定のプロジェクトにだけ関係するものは、このリポジトリには入れず、そのプロジェクト側で管理します。
+
+## 着想を得たもの
+
+この baseline の型は、次から着想を得ています。
+
+- Pull Request の書き方（短い要約でレビュワーが判断でき、量ではなく証拠で示す）は、[mattpocock/skills](https://github.com/mattpocock/skills) の `pr` Skill の考え方に沿っています。その Skill は HumanLayer の [show-me](https://github.com/humanlayer/skills) が元になっています
+- レビュワー個人の頑張りではなく、テストや検査のような決まった仕組みで担保する方針は、pstack（poteto-mode）を使った経験から来ています
+- 生成と更新には [Copier](https://copier.readthedocs.io/) を使い、baseline の変更は各リポジトリの手作業ではなくテンプレート側の変更として扱います
