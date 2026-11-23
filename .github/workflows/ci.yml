@@ -61,7 +61,7 @@ jobs:
             ".gitattributes"
             ".gitignore"
             ".github/dependabot.yml"
-            ".github/hyd3-baseline.yml"
+            ".github/repo-baseline.yml"
             ".github/labels.yml"
             ".github/ISSUE_TEMPLATE/bug.yml"
             ".github/ISSUE_TEMPLATE/chore.yml"

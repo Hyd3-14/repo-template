@@ -134,7 +134,7 @@ is:pr is:open -label:"review: routine" -label:"review: human" -label:"review: de
 - `.editorconfig`
 - `.gitattributes`
 - `.gitignore`
-- `.github/hyd3-baseline.yml`
+- `.github/repo-baseline.yml`
 - `.github/labels.yml`
 - `.github/ISSUE_TEMPLATE/bug.yml`
 - `.github/ISSUE_TEMPLATE/feature.yml`
@@ -169,7 +169,7 @@ dotfiles側の`repo-preflight --agent`とcross-repo drift検査は、生成先re
 
 ## リポジトリ設定
 
-Pull Requestsのマージ方法やauto-mergeの可否などのリポジトリ設定は、`.github/hyd3-baseline.yml`の`repository_settings`が宣言上の正本です。共通baselineは次の値です。
+Pull Requestsのマージ方法やauto-mergeの可否などのリポジトリ設定は、`.github/repo-baseline.yml`の`repository_settings`が宣言上の正本です。共通baselineは次の値です。
 
 - マージ方法はmerge commit、squash、rebaseのすべてを許可する
 - `allow_auto_merge`はtrueとする。Dependabotのminor/patch更新の自動マージは、この設定が前提になる
