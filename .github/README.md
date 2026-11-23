@@ -41,6 +41,8 @@ python3 -m unittest discover -s scripts/tests
 
 Every apply script accepts `--dry-run` to show the diff before changing anything. Run `apply-rulesets` last: it requires the baseline CI checks to exist in the repository.
 
+Full walkthrough — prerequisites, the existing-repository path, troubleshooting, and an instruction block you can hand to an AI agent: [docs/getting-started.md](../docs/getting-started.md).
+
 GitHub's **Use this template** button also works, but it is a one-time copy and later baseline changes do not flow in. Copier records the template version in `.copier-answers.yml` and supports `copier update`.
 
 ## What is included

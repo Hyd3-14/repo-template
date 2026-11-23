@@ -41,6 +41,8 @@ python3 -m unittest discover -s scripts/tests
 
 適用スクリプトはいずれも `--dry-run` で変更前に差分を表示できます。`apply-rulesets` は baseline の CI チェックがリポジトリに存在することが前提のため、最後に実行してください。
 
+前提、既存リポジトリへの導入、詰まったときの対処、AI Agent へそのまま渡せる指示文までを含む完全な手順は [docs/getting-started.ja.md](../docs/getting-started.ja.md) にあります。
+
 GitHub の **Use this template** ボタンでも作れますが、その場合は生成した瞬間のコピーで終わり、後からの baseline 変更は流れません。Copier で生成すると版が `.copier-answers.yml` に記録され、`copier update` で更新できます。
 
 ## 含まれるもの
