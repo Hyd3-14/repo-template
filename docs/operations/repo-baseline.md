@@ -23,8 +23,7 @@
 ## 責務
 
 - `repo-template`: README、軽量AGENTS、Issue Forms、PR template、labels、CI、Dependabotなど共通baseの正本。
-- `dotfiles`: `app`、`tooling`、`security`、`dotfiles-public-safe`などproject type固有overlayの管理元。overlayをrepo-templateに置かないのは、`Use this template`で作ったrepositoryに使わないoverlayまでコピーされるため。
-- `dotfiles`: repo-preflight、repo-bootstrap、branch検査、publish workflow、drift検査など運用仕様と実行ロジックの正本。
+- `dotfiles`: `app`、`tooling`、`security`、`dotfiles-public-safe`などproject type固有overlayの管理元と、repo-preflight、repo-bootstrap、branch検査、publish workflow、drift検査など運用仕様と実行ロジックの管理元。overlayをrepo-templateに置かないのは、`Use this template`で作ったrepositoryに使わないoverlayまでコピーされるため。
 
 ## 共通仕様
 
