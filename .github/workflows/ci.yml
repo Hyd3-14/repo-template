@@ -83,6 +83,7 @@ jobs:
             "scripts/sync-labels"
             "scripts/apply-repo-settings"
             "scripts/apply-rulesets"
+            "scripts/check-baseline"
             "rulesets/default-branch.json"
             "scripts/validate-template"
           )

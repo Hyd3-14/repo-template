@@ -189,6 +189,8 @@ if not Path("scripts/apply-repo-settings").is_file():
     fail("scripts/apply-repo-settingsが必要です")
 if not Path("scripts/apply-rulesets").is_file():
     fail("scripts/apply-rulesetsが必要です")
+if not Path("scripts/check-baseline").is_file():
+    fail("scripts/check-baselineが必要です")
 ruleset_path = Path("rulesets/default-branch.json")
 if not ruleset_path.is_file():
     fail("rulesets/default-branch.jsonが必要です")
