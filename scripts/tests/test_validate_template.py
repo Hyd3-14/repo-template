@@ -49,6 +49,29 @@ class ValidateTemplateScanTest(unittest.TestCase):
 
         self.assertEqual(completed.returncode, 0, completed.stdout)
 
+    def test_readmeの必須の節が欠けると失敗する(self) -> None:
+        jinja = self.root / "README.md.jinja"
+        text = jinja.read_text(encoding="utf-8")
+        jinja.write_text(text.replace("## Usage\n", ""), encoding="utf-8")
+
+        completed = self.validate()
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("READMEに必須の節がありません", completed.stdout)
+
+    def test_readmeの節の順序が違うと失敗する(self) -> None:
+        jinja = self.root / "README.md.jinja"
+        text = jinja.read_text(encoding="utf-8")
+        text = text.replace("## Features", "## __swap__")
+        text = text.replace("## Usage", "## Features")
+        text = text.replace("## __swap__", "## Usage")
+        jinja.write_text(text, encoding="utf-8")
+
+        completed = self.validate()
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("READMEの節の順序が骨格と異なります", completed.stdout)
+
     def test_repository直下の旧label参照は引き続き検出する(self) -> None:
         self.write("notes.md")
 

@@ -83,8 +83,35 @@ if Path("README.md.jinja").is_file():
     for path in [Path(".github/README.md")]:
         if not path.is_file():
             fail(f"必須ファイルがありません: {path}")
-elif not Path("README.md").is_file():
+    readme_source = Path("README.md.jinja")
+elif Path("README.md").is_file():
+    readme_source = Path("README.md")
+else:
     fail("必須ファイルがありません: README.md")
+
+# READMEの必須の節が、骨格の順序どおりに並んでいることを確認する。
+# Configurationは任意の節のため対象に含めない。詳細はrepo-baseline.mdの「README」を参照する。
+readme_headings = [
+    line
+    for line in readme_source.read_text(encoding="utf-8").splitlines()
+    if line.startswith("## ")
+]
+expected_readme_headings = [
+    "## What this is",
+    "## Features",
+    "## Quick Start",
+    "## Usage",
+    "## Development",
+    "## License",
+    "## Baseline",
+]
+readme_positions = []
+for heading in expected_readme_headings:
+    if heading not in readme_headings:
+        fail(f"READMEに必須の節がありません: {readme_source}: {heading}")
+    readme_positions.append(readme_headings.index(heading))
+if readme_positions != sorted(readme_positions):
+    fail(f"READMEの節の順序が骨格と異なります: {readme_source}")
 
 if "@AGENTS.md" not in Path("CLAUDE.md").read_text(encoding="utf-8").split():
     fail("CLAUDE.mdは@AGENTS.mdを読み込む必要があります")
