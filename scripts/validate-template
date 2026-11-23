@@ -317,7 +317,7 @@ for path in sorted(Path(".github/workflows").glob("*.y*ml")):
     workflow = path.read_text(encoding="utf-8")
     if not re.search(r'^permissions:', workflow, flags=re.MULTILINE):
         fail(f"workflowにpermissionsが必要です: {path}")
-    checkout_count = len(re.findall(r'^\s+uses:\s+actions/checkout@', workflow, flags=re.MULTILINE))
+    checkout_count = len(re.findall(r'^\s+(?:-\s+)?uses:\s+actions/checkout@', workflow, flags=re.MULTILINE))
     persist_false_count = len(re.findall(r'^\s+persist-credentials:\s*false\s*$', workflow, flags=re.MULTILINE))
     if checkout_count != persist_false_count:
         fail(f"actions/checkoutごとにpersist-credentials: falseが必要です: {path}")
