@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/jdx/jactionlint/main/schema/jactionlint-config.json
+# Workflowの構文・型（旧actionlint）と権限・timeout・SHA固定などのポリシー（旧ghalint）を検査する。
+# dotfilesの.github/jactionlint.yamlと同じ方針。
+profile: default
+rules:
+  # ghalintのjob_secretsに当たる検査。jobのenvにsecretを置くと全stepから読めるため、
+  # environmentかstepのenvで渡すようにする。defaultではpedanticのwarnなので上げる。
+  secrets-outside-env: error
+  # ghalintのworkflow_secretsに当たる検査。workflowのenvのsecretは全jobから読めてしまう。
+  workflow-secret-scope: error
+  # SHA固定したActionのversion comment。照合はCIのpinact --verify-commentが行い、ここでは有無だけを見る。
+  missing-version-comment: error
+  # ci.ymlのrun_heavy出力は、生成先repositoryが重いjobを省略するための契約として残す。
+  # template自身には消費するjobが無いため、この検査だけwarnに留める。
+  unused-job-output: warn

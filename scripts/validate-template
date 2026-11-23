@@ -65,6 +65,7 @@ required = [
     Path(".gitignore"),
     Path(".github/dependabot.yml"),
     Path(".github/repo-baseline.yml"),
+    Path(".github/jactionlint.yaml"),
     Path(".github/labels.yml"),
     Path(".github/workflows/ci.yml"),
     Path(".github/workflows/dependabot-triage.yml"),
@@ -82,11 +83,15 @@ if "@AGENTS.md" not in Path("CLAUDE.md").read_text(encoding="utf-8").split():
     fail("CLAUDE.mdは@AGENTS.mdを読み込む必要があります")
 
 mise_config = Path("mise.toml").read_text(encoding="utf-8")
-for tool in ["actionlint", "gitleaks", "shellcheck"]:
+for tool in ["gitleaks", "shellcheck"]:
     if not re.search(rf'^{re.escape(tool)}\s*=', mise_config, flags=re.MULTILINE):
         fail(f"mise.tomlに{tool}のversion固定が必要です")
     if f"[[tools.{tool}]]" not in Path("mise.lock").read_text(encoding="utf-8"):
         fail(f"mise.lockに{tool}がありません。mise lockを実行してください")
+if '"github:jdx/jactionlint"' not in mise_config:
+    fail("mise.tomlにjactionlint（github:jdx/jactionlint）のversion固定が必要です")
+if '[[tools."github:jdx/jactionlint"]]' not in Path("mise.lock").read_text(encoding="utf-8"):
+    fail("mise.lockにjactionlintがありません。mise lockを実行してください")
 for task in ["validate", '"baseline:check"', '"docs:check"', "fmt", "lint", '"secrets:scan"', "test"]:
     if f"[tasks.{task}]" not in mise_config:
         fail(f"mise.tomlに{task} taskが必要です")
@@ -266,7 +271,7 @@ for ecosystem, expected in expected_dependabot_labels.items():
         fail(f"Dependabotのlabel構成が標準と異なります: {ecosystem}: {sorted(actual)}")
 
 static_checks = Path(".github/workflows/github-actions-static-checks.yml").read_text(encoding="utf-8")
-for tool in ["actionlint", "zizmor", "ghalint", "pinact"]:
+for tool in ["jactionlint", "zizmor", "pinact"]:
     if not re.search(rf'^\s+name:\s*{re.escape(tool)}\s*$', static_checks, flags=re.MULTILINE):
         fail(f"GitHub Actions static checksに{tool} jobが必要です")
 

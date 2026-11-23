@@ -41,7 +41,7 @@
 
 ## GitHub Actions baseline
 
-`.github/workflows/github-actions-static-checks.yml`は、`actionlint`（ShellCheck連携）、`zizmor`、`ghalint`、`pinact`を検証します。`actionlint`成功後、後3者を並列に実行し、集約jobで結果を1つのrequired checkへまとめます。
+`.github/workflows/github-actions-static-checks.yml`は、`jactionlint`（ShellCheck連携。構文・型と、権限・timeoutなどのポリシーを`.github/jactionlint.yaml`で検査）、`zizmor`、`pinact`を検証します。`jactionlint`成功後、後2者を並列に実行し、集約jobで結果を1つのrequired checkへまとめます。
 
 全workflowでは、次の規約を共通baselineとします。
 
@@ -159,12 +159,11 @@ is:pr is:open -label:"review: routine" -label:"review: human" -label:"review: de
 ```sh
 mise install
 mise run validate
-ghalint run
 zizmor --collect=all .
 pinact run --check --verify-comment
 ```
 
-`pinact`はversion annotationの検証時にGitHub APIを使うため、必要に応じてstep-levelの`GITHUB_TOKEN`またはローカルの認証済み環境を用意します。`mise run validate`はBaseline CIが呼ぶものと同じtaskで、必須file、空白、secretらしいfile名、workflowのpermissions、template契約、文書の目次、`scripts/tests`のunit test、actionlint、ShellCheck、gitleaksを実行します。ghalint、zizmor、pinactは`GitHub Actions Static Checks` workflowで実行します。
+`pinact`はversion annotationの検証時にGitHub APIを使うため、必要に応じてstep-levelの`GITHUB_TOKEN`またはローカルの認証済み環境を用意します。`mise run validate`はBaseline CIが呼ぶものと同じtaskで、必須file、空白、secretらしいfile名、workflowのpermissions、template契約、文書の目次、`scripts/tests`のunit test、jactionlint、ShellCheck、gitleaksを実行します。zizmor、pinactは`GitHub Actions Static Checks` workflowで実行します。
 
 ## mise task
 
@@ -175,7 +174,7 @@ task名は全repositoryで次の意味に揃えます。中身はrepositoryご�
 | task | 意味 | baseの状態 |
 | --- | --- | --- |
 | `validate` | mergeの前提になるhard gateをすべて実行する。Baseline CIはこのtaskだけを呼ぶ | 定義済み |
-| `lint` | 変更しない静的検査 | 定義済み（actionlint、ShellCheck） |
+| `lint` | 変更しない静的検査 | 定義済み（jactionlint、ShellCheck） |
 | `fmt` | formatterなどでfileを書き換える | 定義済み（文書の目次を再生成） |
 | `test` | 自動テストを実行する | 定義済み（`scripts/tests`のunit test） |
 | `<対象>:check`、`<対象>:scan` | 特定の対象の検査 | `baseline:check`、`docs:check`、`secrets:scan`を定義済み |

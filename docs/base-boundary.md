@@ -57,7 +57,7 @@ PR #35（#31〜#34の対応）と#44（目次生成、review label、CIの省略
 | ファイル | 移動先 | 理由 |
 | --- | --- | --- |
 | `.github/workflows/dependabot-triage.yml`、`.github/workflows/automerge-dependabot.yml` | Dependabot自動化用のoverlay（新設） | `pull_request_target`と`workflow_run`を使い、auto-mergeとrequired checksのGitHub設定を前提にする（基準2、3） |
-| `.github/workflows/github-actions-static-checks.yml` | `security` | zizmor、ghalint、pinactはworkflowを多く持つrepository向けのhardening。pinactはGitHub APIの認証も要る（基準1、3）。actionlintだけはbaseのCIに残す |
+| `.github/workflows/github-actions-static-checks.yml` | `security` | zizmor、pinactはworkflowを多く持つrepository向けのhardening。pinactはGitHub APIの認証も要る（基準1、3）。jactionlintだけはbaseのCIに残す |
 | `SECURITY.md` | `security`、またはpublic公開用のoverlay | private vulnerability reportingはpublic repository向けの導線（基準2） |
 
 ### template専用
@@ -114,3 +114,4 @@ Issue #41 で検討している次の3点は、上の判断基準を満たす限
 | `scripts/check-baseline` | base | 対象 repository と baseline の差分報告は生成先でも使う |
 | `docs/getting-started.md`、`docs/getting-started.ja.md` | template専用 | template repository 側の案内のため、copier の除外に入れて生成先へ配らない |
 | `.github/README.md`、`.github/README.ja.md` | template専用 | 生成先へは配らない（copier の除外） |
+| `.github/jactionlint.yaml` | base | workflow の構文・型とポリシーの検査設定として生成先へ配る（#76 で actionlint と ghalint を jactionlint へ統合） |
