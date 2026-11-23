@@ -13,6 +13,7 @@
   - [レビュー要求label](#%E3%83%AC%E3%83%93%E3%83%A5%E3%83%BC%E8%A6%81%E6%B1%82label)
 - [文書の目次](#%E6%96%87%E6%9B%B8%E3%81%AE%E7%9B%AE%E6%AC%A1)
 - [CIの省略判定](#ci%E3%81%AE%E7%9C%81%E7%95%A5%E5%88%A4%E5%AE%9A)
+- [README](#readme)
 - [Required files](#required-files)
 - [検証](#%E6%A4%9C%E8%A8%BC)
 - [mise task](#mise-task)
@@ -126,6 +127,14 @@ is:pr is:open -label:"review: routine" -label:"review: human" -label:"review: de
 - 許可一覧にないpath、renameの元path、PR以外のevent、SHAの不足、差分取得の失敗では、必ず`run_heavy=true`にします。
 - 生成先repoでbuild、test、E2Eなどの重いjobを追加する場合は、`needs: changes`と`if: needs.changes.outputs.run_heavy == 'true'`を付けます。`if`で省略したjobはskippedとなり、required checkを満たします。
 - 生成先repoで文書から検証対象を生成する場合など、文書変更が検証結果に影響するなら、許可一覧から外してください。
+
+## README
+
+生成先 repository の README は `README.md.jinja` が骨格です。冒頭は中央寄せのタイトルと1行説明とし、英日2ファイルで公開する場合だけ言語切り替えを中央寄せ＋縦棒区切りで置きます。badge は、CIの状態や公開packageのversionなど、実在を確認できたものだけを置きます。確認できないbadgeは置きません。
+
+節の順序と必須・任意の扱いは `README.md.jinja` が定義し、`scripts/validate-template` が検査します。README を書く手順は write-readme Skill（[Hyd3-14/skills](https://github.com/Hyd3-14/skills)）を参照してください。節の一覧はここに重ねて書きません。
+
+`Roadmap`、`Contact`、`Acknowledgments` は置きません。内容は実装で確認した事実だけを書き、未実装の計画を機能として書かないでください。
 
 ## Required files
 

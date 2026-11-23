@@ -1,7 +1,58 @@
+<div align="center">
+
 # {{ project_name }}
 {% if project_description %}
 {{ project_description }}
 {% endif %}
+</div>
+
+<!--
+  言語切り替え: 英日2ファイルで公開する場合だけ、次の1行を中央寄せブロックの中へ入れる。
+  <p align="center">English | <a href="README.ja.md">日本語</a></p>
+  badge: 実在を確認できたものだけをこの下へ置く（CIの状態、license、公開packageのversion等）。
+  確認できないbadgeは置かない。
+  例: [![CI](https://github.com/<owner>/{{ project_name }}/actions/workflows/ci.yml/badge.svg)](https://github.com/<owner>/{{ project_name }}/actions/workflows/ci.yml)
+-->
+
+## What this is
+
+<!-- このリポジトリが何をするものか、誰に向けたものかを1から3文で書く。実装で確認した内容だけを書き、未実装の計画は書かない。 -->
+
+## Features
+
+<!-- 確認できた機能だけを短く列挙する。確認できない項目は足さない。 -->
+
+- TODO: 機能を1行で書く
+
+## Quick Start
+
+<!-- 前提（必要なtoolとversion）と、最短で動く手順を書く。手順は実際に実行して確認したコマンドだけを置く。 -->
+
+```sh
+# TODO: 導入と最初の実行コマンドを書く
+```
+
+## Usage
+
+<!-- 代表的な使い方を、コマンドと出力の例で書く。詳細な仕様はdocsへ置き、ここからリンクする。 -->
+
+## Configuration
+
+<!-- 設定項目が無いリポジトリでは、この節ごと削除する。設定がある場合は、項目名、既定値、意味を書く。 -->
+
+## Development
+
+<!-- 開発に必要なコマンドを書く。共通の検証入口は次のとおり。 -->
+
+```sh
+mise install
+mise run validate
+```
+
+## License
+
+[MIT](LICENSE)
+
 ## Baseline
 
 このリポジトリは [Hyd3-14/repo-template](https://github.com/Hyd3-14/repo-template) から Copier で生成されています。共通 baseline の変更は、生成先で `copier update` を実行すると取り込めます。生成時の回答は `.copier-answers.yml` に記録されています（手で書き換えないこと）。
